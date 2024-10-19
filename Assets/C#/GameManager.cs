@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
         sceneLoader("01MainMenu");
     }
 
-    void sceneLoader(string sceneName)
+    public void sceneLoader(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
