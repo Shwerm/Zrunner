@@ -10,6 +10,12 @@ public class UIManager : MonoBehaviour
     //Reference to GameManager
     private GameManager gameManager;
 
+    //Reference to UI elements
+    [SerializeField]private GameObject mainMenuPanel;
+    [SerializeField]private GameObject optionsPanel;
+    [SerializeField]private GameObject helpPanel;
+
+
     //Create Singleton Instance of the UIManager
     private void Awake()
     {
@@ -24,24 +30,53 @@ public class UIManager : MonoBehaviour
         }
     }
 
+
     void Start()
     {
         //Get reference to GameManager
         gameManager = GameManager.gameManagerInstance;
-    }
-    //Button onClick Function
 
+        //Enable & Disable UI elements on Start
+        mainMenuPanel.SetActive(true);
+        optionsPanel.SetActive(false);
+        helpPanel.SetActive(false);
+    }
+
+
+    //Button onClick Function
     public void OnButtonClicked(string buttonName)
     {
         switch (buttonName)
         {
+            //Start game
             case "StartButton":
-            //Load game scene
-            Debug.Log("Start Button Clicked");
             gameManager.sceneLoader("02GameScene");
             break;
 
-            //case "QuitButton":
+            //Quit game
+            case "QuitButton":
+            Debug.Log("Quit Game");
+            Application.Quit();
+            break;
+
+            //Show options panel
+            case "OptionsButton":
+            mainMenuPanel.SetActive(false);
+            optionsPanel.SetActive(true);
+            break;
+
+            //Show help panel
+            case "HelpButton":
+            mainMenuPanel.SetActive(false);
+            helpPanel.SetActive(true);
+            break;
+
+            //Return to main menu
+            case "MainMenuButton":
+            mainMenuPanel.SetActive(true);
+            optionsPanel.SetActive(false);
+            helpPanel.SetActive(false);
+            break;
         }
     }
 }
