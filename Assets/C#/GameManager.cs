@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     //Define singleton instance of the game manager
     public static GameManager gameManagerInstance;
 
+    public GameObject player;
 
     // Start is called before the first frame update
     void Awake()
@@ -31,8 +32,11 @@ public class GameManager : MonoBehaviour
         sceneLoader("01MainMenu");
     }
 
+    
     public void sceneLoader(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
+
+
 }
