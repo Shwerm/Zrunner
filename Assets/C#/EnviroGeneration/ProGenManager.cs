@@ -8,7 +8,8 @@ public class ProGenManager : MonoBehaviour
     public static ProGenManager proGenManagerInstance { get; private set; }
 
     [Header("Plane Spawning Settings")]
-    public GameObject[] corridorSections; 
+    public GameObject[] corridorSections;
+    public GameObject[] obstacleSections;
     public float spawnDistance = 5f;
 
     //List to manage planes
@@ -36,29 +37,59 @@ public class ProGenManager : MonoBehaviour
 
     public void SpawnCorridor(float positionZ)
     {
-        //Pick random corridor section from the array
-        int randomIndex = Random.Range(0, corridorSections.Length);
+        //Determin probability of spawning an obstacle
+        int obstacleProbability = Random.Range(1, 10);
 
-        //Instantiate a new corridor section at the specified Z position
-        GameObject newCorridor = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, positionZ), Quaternion.identity);
-        if (newCorridor == null)
-        {
-            Debug.LogError("Failed to instantiate the plane prefab!");
-            return;
-        }
+        //If the probability is greater than or equal to 4, don't spawn an obstacle
+        if (obstacleProbability >= 3)
+        {    //Pick random corridor section from the array
+            int randomIndex = Random.Range(0, corridorSections.Length);
 
-        //Add the new plane to the list
-        activeCorridors.Add(newCorridor);
+            //Instantiate a new corridor section at the specified Z position
+            GameObject newCorridor = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, positionZ), Quaternion.identity);
+            if (newCorridor == null)
+            {
+                Debug.LogError("Failed to instantiate the plane prefab!");
+                return;
+            }
 
-        //Remove the oldest plane if there are more than 3 planes
-        if (activeCorridors.Count > 3)
-        {
-            //Get the oldest plane (the first in the list)
-            GameObject oldestCorridor = activeCorridors[0];
-            //Remove it from the list
-            activeCorridors.RemoveAt(0);
-            //Destroy the oldest plane
-            Destroy(oldestCorridor);
+            //Add the new plane to the list
+            activeCorridors.Add(newCorridor);
+
+            //Remove the oldest plane if there are more than 3 planes
+            if (activeCorridors.Count > 3)
+            {
+                //Get the oldest plane (the first in the list)
+                GameObject oldestCorridor = activeCorridors[0];
+                //Remove it from the list
+                activeCorridors.RemoveAt(0);
+                //Destroy the oldest plane
+                Destroy(oldestCorridor);
+            }
+        }else{
+            int randomIndex = Random.Range(0, obstacleSections.Length);
+
+            //Instantiate a new corridor section at the specified Z position
+            GameObject newCorridor = Instantiate(obstacleSections[randomIndex], new Vector3(0, 0, positionZ), Quaternion.identity);
+            if (newCorridor == null)
+            {
+                Debug.LogError("Failed to instantiate the plane prefab!");
+                return;
+            }
+
+            //Add the new plane to the list
+            activeCorridors.Add(newCorridor);
+
+            //Remove the oldest plane if there are more than 3 planes
+            if (activeCorridors.Count > 3)
+            {
+                //Get the oldest plane (the first in the list)
+                GameObject oldestCorridor = activeCorridors[0];
+                //Remove it from the list
+                activeCorridors.RemoveAt(0);
+                //Destroy the oldest plane
+                Destroy(oldestCorridor);
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ public class SpawnTrigger : MonoBehaviour
             if (spawner != null)
             {
                 //Spawn the next plane in front of the player
-                spawner.SpawnCorridor(transform.position.z + spawner.spawnDistance);
+                spawner.SpawnCorridor(transform.position.z + spawner.spawnDistance * 2);
             }
         }
     }

@@ -333,7 +333,56 @@ MonoBehaviour:
   - {fileID: 8526306688583685847, guid: 4ea634049a5593447ba5d55451cc3a57, type: 3}
   - {fileID: 8526306688583685847, guid: 94905b1525d3ac94b831d4f613360261, type: 3}
   - {fileID: 8526306688583685847, guid: fdb94a12131dfec4daf5df8571aa9559, type: 3}
+  obstacleSections:
+  - {fileID: 8526306688583685847, guid: 120ae705980396e48b71d867038b1989, type: 3}
+  - {fileID: 8526306688583685847, guid: 1dfa0ecd271bd5f45935c8c3f27a5934, type: 3}
+  - {fileID: 8526306688583685847, guid: 09b4a11e659a33b409c2dd6056187a71, type: 3}
+  - {fileID: 8526306688583685847, guid: 84b20544ac2fefc4a94f0c6981b656a7, type: 3}
   spawnDistance: 14
+--- !u!1 &1601043786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1601043787}
+  - component: {fileID: 1601043788}
+  m_Layer: 0
+  m_Name: TimeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1601043787
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601043786}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1601043788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601043786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328ca5e2f588acc42829275e004c2770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2142989601
 GameObject:
   m_ObjectHideFlags: 0

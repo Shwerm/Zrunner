@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
 
     public GameObject player;
 
+    public float playerScore;
+    public float playerHighScore;
+
     // Start is called before the first frame update
     void Awake()
     {
