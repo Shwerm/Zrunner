@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     private string highScorePath;
     private string jsonFilePath;
 
-    // Start is called before the first frame update
+
     void Awake()
     {
         // Create singleton instance of the game manager
@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     void Start()
     {
         // Load high score when the game starts (e.g., in the main menu)
@@ -42,10 +43,12 @@ public class GameManager : MonoBehaviour
         sceneLoader("01MainMenu");
     }
 
+
     public void sceneLoader(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
+
 
     public void LoadHighScore()
     {
@@ -94,7 +97,41 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+
+    public void SaveNewHighScore()
+    {
+        // Check if playerScore is higher than playerHighScore
+        if (playerScore > playerHighScore)
+        {
+            // Update playerHighScore to the new value
+            playerHighScore = playerScore;
+
+            // Create the data structure to store the new high score
+            HighScoreData newHighScoreData = new HighScoreData { playerHighScore = playerHighScore };
+
+            // Convert to JSON format
+            string json = JsonUtility.ToJson(newHighScoreData, true);
+
+            // Overwrite the existing JSON file with the new high score
+            File.WriteAllText(jsonFilePath, json);
+
+            Debug.Log("New high score saved: " + playerHighScore);
+        }
+        else
+        {
+            Debug.Log("Current score (" + playerScore + ") is less than high score (" + playerHighScore + "). No update.");
+        }
+    }
+
+
+    public void playerDeath()
+    {
+        sceneLoader("03PlayerDeathScene");
+        SaveNewHighScore();
+    }
 }
+
 
 // High score data class
 [System.Serializable]
