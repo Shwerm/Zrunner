@@ -23,7 +23,6 @@ public class ProGenManager : MonoBehaviour
         if (proGenManagerInstance == null)
         {
             proGenManagerInstance = this;
-            DontDestroyOnLoad(this);
         }
         else
         {
