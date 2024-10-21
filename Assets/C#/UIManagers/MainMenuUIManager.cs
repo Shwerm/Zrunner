@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
+public class MainMenuUIManager : MonoBehaviour
 {
     //Define Singleton instance
-    public static UIManager uiManagerInstance { get; private set; }
+    public static MainMenuUIManager mainMenuUIManagerInstance { get; private set; }
 
     //Reference to GameManager
     private GameManager gameManager;
@@ -16,13 +16,12 @@ public class UIManager : MonoBehaviour
     [SerializeField]private GameObject helpPanel;
 
 
-    //Create Singleton Instance of the UIManager
+    //Create Singleton Instance of the Main Menu UIManager
     private void Awake()
     {
-        if (uiManagerInstance == null)
+        if (mainMenuUIManagerInstance == null)
         {
-            uiManagerInstance = this;
-            DontDestroyOnLoad(this);
+            mainMenuUIManagerInstance = this;
         }
         else
         {
