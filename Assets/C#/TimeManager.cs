@@ -39,5 +39,4 @@ public class TimeManager : MonoBehaviour
         playerSurvivalTime += Time.deltaTime;
         gameManager.playerScore = playerSurvivalTime * 10;
     }
-    
 }

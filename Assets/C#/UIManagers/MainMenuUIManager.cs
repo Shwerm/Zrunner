@@ -10,7 +10,7 @@ public class MainMenuUIManager : MonoBehaviour
     //Reference to GameManager
     private GameManager gameManager;
 
-    //Reference to UI elements
+    //Reference to Main Menu UI elements
     [SerializeField]private GameObject mainMenuPanel;
     [SerializeField]private GameObject optionsPanel;
     [SerializeField]private GameObject helpPanel;

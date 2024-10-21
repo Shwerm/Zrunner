@@ -10,6 +10,7 @@ public class DeathScreenUIManager : MonoBehaviour
     //Reference to GameManager
     private GameManager gameManager;
 
+
     //Create Singleton Instance of the Death Screen UIManager
     private void Awake()
     {
@@ -22,6 +23,7 @@ public class DeathScreenUIManager : MonoBehaviour
             Destroy(this);
         }
     }
+
 
     void Start()
     {

@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        // If the gameManager is not assigned in the inspector, try to find it in the scene
+        //If the Game Manager is not assigned in the inspector, try to find it in the scene
         if (gameManager == null)
         {
             gameManager = FindObjectOfType<GameManager>();
