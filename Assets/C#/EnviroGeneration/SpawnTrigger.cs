@@ -8,12 +8,16 @@ public class SpawnTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Trigger the next corridor to spawn earlier, when the player is in the middle of the section
             ProGenManager spawner = ProGenManager.proGenManagerInstance;
 
+            //Trigger the next corridor to spawn
             if (spawner != null)
             {
                 spawner.SpawnCorridor();
+            }
+            else
+            {
+                Debug.LogError("ProGenManager instance is not assigned!");
             }
         }
     }

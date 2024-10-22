@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class QTEManager : MonoBehaviour
 {
-    // Define Singleton instance
+    //Define Singleton instance
     public static QTEManager QTEManagerInstance { get; private set; }
 
+    //Reference to the GameSceneUIManager
     private GameSceneUIManager gameSceneUIManager;
+
 
     void Awake()
     {
-        // Create Singleton Instance of the QTEManager
+        //Create Singleton Instance of the QTEManager
         if (QTEManagerInstance == null)
         {
             QTEManagerInstance = this;
@@ -21,16 +23,25 @@ public class QTEManager : MonoBehaviour
             Destroy(this);
         }
 
+        //Assign the GameSceneUIManager instance
         gameSceneUIManager = GameSceneUIManager.gameSceneUIManagerInstance;
+
+        if(gameSceneUIManager == null)
+        {
+            Debug.LogError("GameSceneUIManager instance is not assigned!");
+        }
     }
 
 
+    //QTE Start
     public void qteStart()
     {
         Time.timeScale = 0.2f;
         gameSceneUIManager.qteVisualTrigger();
     }
 
+
+    //QTE Success
     public void qteSuccess(string activeQTE)
     {
         switch (activeQTE)
@@ -40,20 +51,20 @@ public class QTEManager : MonoBehaviour
             break;
 
             case "Slide":
-             Debug.Log("Slide QTE");
-             break;
+            Debug.Log("Slide QTE");
+            break;
 
             case "DodgeRight":
-             Debug.Log("DodgeRight QTE");
-             break;
+            Debug.Log("DodgeRight QTE");
+            break;
 
-             case "DodgeLeft":
-             Debug.Log("DodgeLeft QTE");
-             break;
+            case "DodgeLeft":
+            Debug.Log("DodgeLeft QTE");
+            break;
 
             default:
-             Debug.Log("Invalid QTE Type");
-             break;
+            Debug.Log("Invalid QTE Type");
+            break;
         }
     }
 }

@@ -29,6 +29,11 @@ public class DeathScreenUIManager : MonoBehaviour
     {
         //Get reference to GameManager
         gameManager = GameManager.gameManagerInstance;
+
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager instance is not assigned!");
+        }
     }
 
 
@@ -45,6 +50,10 @@ public class DeathScreenUIManager : MonoBehaviour
             //Restart Game Level
             case "RestartButton":
             gameManager.sceneLoader("02GameScene");
+            break;
+
+            default:
+            Debug.LogError("Button name is not assigned!");
             break;
         }
     }

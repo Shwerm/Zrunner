@@ -9,14 +9,16 @@ public class GameSceneUIManager : MonoBehaviour
     //Define Singleton instance
     public static GameSceneUIManager gameSceneUIManagerInstance { get; private set; }
 
+    //References
     private PlayerManager playerManager;
     private QTEManager qteManager;
 
+    [Header("UI Elements")]
     public GameObject qteVisual;
     public Image redCircle;
     public TMP_Text qteText;
 
-    //Circle Lerp Variables
+    [Header("QTE Timer Settings")]
     public float lerpDuration = 2f;
     private Vector3 startScale = new Vector3(3f, 3f, 3f);
     private Vector3 endScale = new Vector3(1f, 1f, 1f);
@@ -38,8 +40,11 @@ public class GameSceneUIManager : MonoBehaviour
 
     public void Start()
     {
+        //Assign references to Player Manager and QTE Manager
         playerManager = PlayerManager.playerManagerInstance;
         qteManager = QTEManager.QTEManagerInstance;
+
+        //Error Handling
         if (playerManager == null)
         {
             Debug.LogError("Failed to initialize Player Manager");
@@ -54,7 +59,7 @@ public class GameSceneUIManager : MonoBehaviour
     }
 
 
-
+    //QTE Visual Trigger
     public void qteVisualTrigger()
     {
         KeyCode randomKey = GetRandomKey();
@@ -65,12 +70,12 @@ public class GameSceneUIManager : MonoBehaviour
         //Start Lerp
         StartCoroutine(ShrinkImage());
 
-        //Handlke QTE Success
+        //Handlke QTE Input
         StartCoroutine(checkPlayerInput(randomKey));
-
-        //Handle QTE Failure
     }
 
+
+    //Check Player Input
     private IEnumerator checkPlayerInput(KeyCode randomKey)
     {
         while (true)
@@ -80,48 +85,51 @@ public class GameSceneUIManager : MonoBehaviour
                 Time.timeScale = 1f;
                 qteVisual.SetActive(false);
                 qteManager.qteSuccess(playerManager.activeQTE);
-                yield break; // This terminates the coroutine
+                yield break; 
              }
-          yield return null; // Wait for the next frame
+          yield return null;
          }
     }
 
 
+    //Shrink UI QTE timer
     private IEnumerator ShrinkImage()
     {
-        // Reset elapsed time
+        //Reset elapsed time
         elapsedTime = 0f;
 
         while (elapsedTime < lerpDuration)
         {
-            elapsedTime += Time.deltaTime; // Increment elapsed time
-            float progress = Mathf.Clamp01(elapsedTime / lerpDuration); // Progress from 0 to 1
+            elapsedTime += Time.deltaTime;
+            float progress = Mathf.Clamp01(elapsedTime / lerpDuration);
 
-            // Lerp between startScale and endScale based on the progress
+            //Lerp between startScale and endScale based on the progress
             redCircle.transform.localScale = Vector3.Lerp(startScale, endScale, progress);
 
-            yield return null; // Wait for the next frame
+            yield return null;
         }
     }
 
+
+    //Get a random key from the KeyCode enumeration
     KeyCode GetRandomKey()
     {
-        // Get all the values from the KeyCode enumeration
+        //Get all the values from the KeyCode enumeration
         KeyCode[] allKeys = (KeyCode[])System.Enum.GetValues(typeof(KeyCode));
         
-        // Exclude certain keys if necessary (like Escape, Mouse Buttons, etc.)
+        //Exclude certain keys if necessary (like Escape, Mouse Buttons, etc.)
         List<KeyCode> validKeys = new List<KeyCode>();
 
         foreach (KeyCode key in allKeys)
         {
-            // Example: Exclude mouse buttons and certain keys
+            //Example: Exclude mouse buttons and certain keys
             if (key >= KeyCode.A && key <= KeyCode.Z)
             {
                 validKeys.Add(key);
             }
         }
 
-        // Pick a random key from the valid keys
+        //Pick a random key from the valid keys
         int randomIndex = Random.Range(0, validKeys.Count);
         return validKeys[randomIndex];
     }

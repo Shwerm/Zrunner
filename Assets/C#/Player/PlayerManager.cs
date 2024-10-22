@@ -33,16 +33,24 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        //If the Game Manager is not assigned in the inspector, try to find it in the scene
+        //If the Game Manager is not assigned in the inspector manually find it
         if (gameManager == null)
         {
             gameManager = FindObjectOfType<GameManager>();
         }
+        else
+        {
+            Debug.LogError("Game Manager is not assigned!");
+        }
 
-        //If the QTE Manager is not assigned in the inspector, try to find it in the scene
+        //If the QTE Manager is not assigned in the inspector manually find it
         if (qteManager == null)
         {
             qteManager = FindObjectOfType<QTEManager>();
+        }
+        else
+        {
+            Debug.LogError("QTE Manager is not assigned!");
         }
     }
 
@@ -51,8 +59,6 @@ public class PlayerManager : MonoBehaviour
     {
         //Move the player
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
-
-        Debug.Log(Time.timeScale);
     }
 
 
