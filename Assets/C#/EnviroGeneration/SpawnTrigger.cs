@@ -6,15 +6,14 @@ public class SpawnTrigger : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) 
+        if (other.CompareTag("Player"))
         {
-            //Spawn the next plane
-            ProGenManager spawner = FindObjectOfType<ProGenManager>();
-            
+            // Trigger the next corridor to spawn earlier, when the player is in the middle of the section
+            ProGenManager spawner = ProGenManager.proGenManagerInstance;
+
             if (spawner != null)
             {
-                //Spawn the next plane in front of the player
-                spawner.SpawnCorridor(transform.position.z + spawner.spawnDistance * 2);
+                spawner.SpawnCorridor();
             }
         }
     }

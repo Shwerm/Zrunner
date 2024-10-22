@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 533934193714052792}
   - component: {fileID: 1311271133670982559}
   m_Layer: 0
-  m_Name: ProGround010
+  m_Name: ProGround10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

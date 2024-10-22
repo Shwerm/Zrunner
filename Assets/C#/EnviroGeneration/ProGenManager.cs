@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProGenManager : MonoBehaviour
 {
-    //Define Singleton instance
+    // Define Singleton instance
     public static ProGenManager proGenManagerInstance { get; private set; }
 
     [Header("Plane Spawning Settings")]
@@ -12,14 +12,17 @@ public class ProGenManager : MonoBehaviour
     public GameObject[] obstacleSections;
     public float spawnDistance = 5f;
 
-    //List to manage corridor sections
+    // List to manage corridor sections
     private List<GameObject> activeCorridors = new List<GameObject>();
-    private Transform playerTransform;
 
+    // Reference to the manually placed corridor section
+    public GameObject initialCorridorSection;
+
+    private float nextSpawnZ = 0f;
 
     void Start()
     {
-        //Create Singleton Instance of the ProGenManager
+        // Create Singleton Instance of the ProGenManager
         if (proGenManagerInstance == null)
         {
             proGenManagerInstance = this;
@@ -29,58 +32,70 @@ public class ProGenManager : MonoBehaviour
             Destroy(this);
         }
 
-        //Spawn Initial corridor sections
-        SpawnCorridor(spawnDistance);
-        SpawnCorridor(spawnDistance * 2);
+        // Ensure the manually placed section is tracked
+        TrackInitialCorridor();
+
+        // Spawn additional initial corridor sections with correct spacing
+        SpawnInitialCorridors(4); // Adjusted to spawn 4 sections since 1 is manually placed
+    }
+
+    void TrackInitialCorridor()
+    {
+        if (initialCorridorSection != null)
+        {
+            // Add the manually placed section to the list and set the next spawn position after it
+            activeCorridors.Add(initialCorridorSection);
+
+            // Set nextSpawnZ based on the initial corridor's Z position + spawn distance
+            nextSpawnZ = initialCorridorSection.transform.position.z + spawnDistance;
+        }
+        else
+        {
+            Debug.LogError("Initial corridor section is not assigned!");
+        }
+    }
+
+    void SpawnInitialCorridors(int numberOfSections)
+    {
+        // Spawn the specified number of corridor sections initially
+        for (int i = 0; i < numberOfSections; i++)
+        {
+            SpawnCorridor();
+        }
     }
 
 
-    public void SpawnCorridor(float positionZ)
+    //Wait two seconds coroutine definition
+    IEnumerator StreamChunkUnload()
     {
-        //Determine if an obstacle or corridor section should be spawned
-        GameObject newCorridor = InstantiateCorridorOrObstacle(positionZ);
-        
+        yield return new WaitForSeconds(3);
+        GameObject oldestCorridor = activeCorridors[0];
+        activeCorridors.RemoveAt(0);
+        Destroy(oldestCorridor);
+    }
+
+    public void SpawnCorridor()
+    {
+        // Spawn the corridor at the next Z position
+        int randomIndex = Random.Range(0, corridorSections.Length);
+        GameObject newCorridor = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
+
         if (newCorridor == null)
         {
             Debug.LogError("Failed to instantiate the plane prefab!");
             return;
         }
 
-        //Add the new corridor/obstacle section to the list
+        // Add the new plane to the list
         activeCorridors.Add(newCorridor);
 
-        //Remove the oldest corridor section if there are more than 3 active ones
-        if (activeCorridors.Count > 3)
+        // Increment the next spawn position
+        nextSpawnZ += spawnDistance;
+
+        // Remove the oldest plane only when there are more than 5 active planes
+        if (activeCorridors.Count > 5) // Adjust this number as needed
         {
-            RemoveOldestCorridor();
+            StartCoroutine(StreamChunkUnload());
         }
-    }
-
-
-    private GameObject InstantiateCorridorOrObstacle(float positionZ)
-    {
-        int obstacleProbability = Random.Range(1, 10);
-        int randomIndex;
-
-        //If probability is greater than or equal to 3, spawn a corridor, otherwise spawn an obstacle
-        if (obstacleProbability >= 3)
-        {
-            randomIndex = Random.Range(0, corridorSections.Length);
-            return Instantiate(corridorSections[randomIndex], new Vector3(0, 0, positionZ), Quaternion.identity);
-        }
-        else
-        {
-            randomIndex = Random.Range(0, obstacleSections.Length);
-            return Instantiate(obstacleSections[randomIndex], new Vector3(0, 0, positionZ), Quaternion.identity);
-        }
-    }
-
-
-    private void RemoveOldestCorridor()
-    {
-        //Get and destroy the oldest corridor/obstacle (first in the list)
-        GameObject oldestCorridor = activeCorridors[0];
-        activeCorridors.RemoveAt(0);
-        Destroy(oldestCorridor);
     }
 }

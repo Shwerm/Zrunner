@@ -221,6 +221,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7648119366540858512, guid: c2400463b5880f948a71482c3ad35eb2, type: 3}
   m_PrefabInstance: {fileID: 268596792}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &268596794 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8526306688583685847, guid: c2400463b5880f948a71482c3ad35eb2, type: 3}
+  m_PrefabInstance: {fileID: 268596792}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &479076642
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,21 +394,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   corridorSections:
   - {fileID: 8526306688583685847, guid: c2400463b5880f948a71482c3ad35eb2, type: 3}
-  - {fileID: 8526306688583685847, guid: f5fba1917fd254a4096a35d1d333ba24, type: 3}
-  - {fileID: 8526306688583685847, guid: d5c21480326ec644b9e5af90d670c8fc, type: 3}
-  - {fileID: 8526306688583685847, guid: 0627f2a6a28ccbe4d8b7e7eb368b436c, type: 3}
-  - {fileID: 8526306688583685847, guid: 79e346fd81f261b49becb03686861630, type: 3}
-  - {fileID: 8526306688583685847, guid: c703830e296018e4f81aa443d0b5e1c8, type: 3}
-  - {fileID: 8526306688583685847, guid: ab9c3deb48d5e8e448e84f5ce91e0f5c, type: 3}
-  - {fileID: 8526306688583685847, guid: 4ea634049a5593447ba5d55451cc3a57, type: 3}
-  - {fileID: 8526306688583685847, guid: 94905b1525d3ac94b831d4f613360261, type: 3}
-  - {fileID: 8526306688583685847, guid: fdb94a12131dfec4daf5df8571aa9559, type: 3}
+  - {fileID: 8526306688583685847, guid: a85870444bc71b54fbfe52758bec53c8, type: 3}
+  - {fileID: 8526306688583685847, guid: f0266ea1c4b32024dac1e5904e8a10d9, type: 3}
+  - {fileID: 8526306688583685847, guid: 1c02bad4fae50024d8252c6eb7fd2fd0, type: 3}
+  - {fileID: 8526306688583685847, guid: f45287ee28cf6f946945dcc1d826fe7f, type: 3}
+  - {fileID: 8526306688583685847, guid: 8f00b30076226a949a4232a033f00f72, type: 3}
+  - {fileID: 8526306688583685847, guid: 33eee463aa4cb534f9769137b156499f, type: 3}
+  - {fileID: 8526306688583685847, guid: 36a2204b45158a54681befcea55db4a5, type: 3}
+  - {fileID: 8526306688583685847, guid: 881c660ea6de2424f9afdb3e68cd1853, type: 3}
+  - {fileID: 8526306688583685847, guid: 1bbe7dfb514f93e4bb356b4415fe218e, type: 3}
   obstacleSections:
   - {fileID: 8526306688583685847, guid: 120ae705980396e48b71d867038b1989, type: 3}
   - {fileID: 8526306688583685847, guid: 1dfa0ecd271bd5f45935c8c3f27a5934, type: 3}
   - {fileID: 8526306688583685847, guid: 09b4a11e659a33b409c2dd6056187a71, type: 3}
   - {fileID: 8526306688583685847, guid: 84b20544ac2fefc4a94f0c6981b656a7, type: 3}
   spawnDistance: 25
+  initialCorridorSection: {fileID: 268596794}
 --- !u!1 &1601043786
 GameObject:
   m_ObjectHideFlags: 0
