@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProGenManager : MonoBehaviour
 {
-    // Define Singleton instance
+    // Define Singleton instance of the ProGenManager
     public static ProGenManager proGenManagerInstance { get; private set; }
 
     [Header("Plane Spawning Settings")]

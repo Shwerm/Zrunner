@@ -4,12 +4,31 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    //Define Singleton instance
+    public static PlayerManager playerManagerInstance { get; private set; }
+
     [Header("Player Settings")]
     public float moveSpeed = 8f;
 
     [Header("References")]
     public GameManager gameManager;
     public QTEManager qteManager;
+
+    public string activeQTE;
+
+
+    //Create Singleton Instance of the Player Manager
+    private void Awake()
+    {
+        if (playerManagerInstance == null)
+        {
+            playerManagerInstance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
 
 
     void Start()
@@ -32,6 +51,8 @@ public class PlayerManager : MonoBehaviour
     {
         //Move the player
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+
+        Debug.Log(Time.timeScale);
     }
 
 
@@ -50,22 +71,26 @@ public class PlayerManager : MonoBehaviour
     {
         if (other.CompareTag("Jump"))
         {
-            qteManager.JumpQTE();
+            activeQTE = "Jump";
+            qteManager.qteStart();
         }
 
         if (other.CompareTag("Slide"))
         {
-            qteManager.SlideQTE();
+            activeQTE = "Slide";
+            qteManager.qteStart();
         }
 
         if (other.CompareTag("DodgeRight"))
         {
-            qteManager.DodgeRightQTE();
+            activeQTE = "DodgeRight";
+            qteManager.qteStart();
         }
 
         if (other.CompareTag("DodgeLeft"))
         {
-            qteManager.DodgeLeftQTE();
+            activeQTE = "DodgeLeft";
+            qteManager.qteStart();
         }
     }
 }

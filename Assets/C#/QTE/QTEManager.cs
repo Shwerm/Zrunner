@@ -9,7 +9,7 @@ public class QTEManager : MonoBehaviour
 
     private GameSceneUIManager gameSceneUIManager;
 
-    void Start()
+    void Awake()
     {
         // Create Singleton Instance of the QTEManager
         if (QTEManagerInstance == null)
@@ -25,31 +25,35 @@ public class QTEManager : MonoBehaviour
     }
 
 
-    public void JumpQTE()
+    public void qteStart()
     {
-        Debug.Log("Jump QTE");
-        Time.timeScale = 0.5f;
+        Time.timeScale = 0.2f;
         gameSceneUIManager.qteVisualTrigger();
     }
 
-    public void SlideQTE()
+    public void qteSuccess(string activeQTE)
     {
-        Debug.Log("Slide QTE");
-        Time.timeScale = 0.5f;
-        gameSceneUIManager.qteVisualTrigger();
-    }
+        switch (activeQTE)
+        {
+            case "Jump":
+            Debug.Log("Jump QTE");
+            break;
 
-    public void DodgeRightQTE()
-    {
-        Debug.Log("Dodge Right QTE");
-        Time.timeScale = 0.5f;
-        gameSceneUIManager.qteVisualTrigger();
-    }
+            case "Slide":
+             Debug.Log("Slide QTE");
+             break;
 
-    public void DodgeLeftQTE()
-    {
-        Debug.Log("Dodge Left QTE");
-        Time.timeScale = 0.5f;
-        gameSceneUIManager.qteVisualTrigger();
+            case "DodgeRight":
+             Debug.Log("DodgeRight QTE");
+             break;
+
+             case "DodgeLeft":
+             Debug.Log("DodgeLeft QTE");
+             break;
+
+            default:
+             Debug.Log("Invalid QTE Type");
+             break;
+        }
     }
 }

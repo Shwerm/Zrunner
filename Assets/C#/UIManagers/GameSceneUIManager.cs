@@ -9,12 +9,15 @@ public class GameSceneUIManager : MonoBehaviour
     //Define Singleton instance
     public static GameSceneUIManager gameSceneUIManagerInstance { get; private set; }
 
+    private PlayerManager playerManager;
+    private QTEManager qteManager;
+
     public GameObject qteVisual;
     public Image redCircle;
     public TMP_Text qteText;
 
     //Circle Lerp Variables
-    public float lerpDuration = 1f;
+    public float lerpDuration = 2f;
     private Vector3 startScale = new Vector3(3f, 3f, 3f);
     private Vector3 endScale = new Vector3(1f, 1f, 1f);
     private float elapsedTime = 0f;
@@ -33,12 +36,23 @@ public class GameSceneUIManager : MonoBehaviour
         }
     }
 
-
     public void Start()
     {
-        //Disable QTE Visual
+        playerManager = PlayerManager.playerManagerInstance;
+        qteManager = QTEManager.QTEManagerInstance;
+        if (playerManager == null)
+        {
+            Debug.LogError("Failed to initialize Player Manager");
+        }
+
+        if(qteManager == null)
+        {
+            Debug.LogError("Failed to initialize QTE Manager");
+        }
+
         qteVisual.SetActive(false);
     }
+
 
 
     public void qteVisualTrigger()
@@ -50,6 +64,26 @@ public class GameSceneUIManager : MonoBehaviour
 
         //Start Lerp
         StartCoroutine(ShrinkImage());
+
+        //Handlke QTE Success
+        StartCoroutine(checkPlayerInput(randomKey));
+
+        //Handle QTE Failure
+    }
+
+    private IEnumerator checkPlayerInput(KeyCode randomKey)
+    {
+        while (true)
+        {
+          if (Input.GetKeyDown(randomKey))
+             {
+                Time.timeScale = 1f;
+                qteVisual.SetActive(false);
+                qteManager.qteSuccess(playerManager.activeQTE);
+                yield break; // This terminates the coroutine
+             }
+          yield return null; // Wait for the next frame
+         }
     }
 
 
