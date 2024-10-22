@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("References")]
     public GameManager gameManager;
+    public QTEManager qteManager;
 
 
     void Start()
@@ -17,6 +18,12 @@ public class PlayerManager : MonoBehaviour
         if (gameManager == null)
         {
             gameManager = FindObjectOfType<GameManager>();
+        }
+
+        //If the QTE Manager is not assigned in the inspector, try to find it in the scene
+        if (qteManager == null)
+        {
+            qteManager = FindObjectOfType<QTEManager>();
         }
     }
 
@@ -34,6 +41,31 @@ public class PlayerManager : MonoBehaviour
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             gameManager.playerDeath();
+        }
+    }
+
+
+    //QTE trigger detection
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Jump"))
+        {
+            qteManager.JumpQTE();
+        }
+
+        if (other.CompareTag("Slide"))
+        {
+            qteManager.SlideQTE();
+        }
+
+        if (other.CompareTag("DodgeRight"))
+        {
+            qteManager.DodgeRightQTE();
+        }
+
+        if (other.CompareTag("DodgeLeft"))
+        {
+            qteManager.DodgeLeftQTE();
         }
     }
 }

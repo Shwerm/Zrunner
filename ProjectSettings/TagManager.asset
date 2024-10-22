@@ -6,6 +6,10 @@ TagManager:
   tags:
   - PlayerSpawnLoc
   - Obstacle
+  - DodgeLeft
+  - DodgeRight
+  - Jump
+  - Slide
   layers:
   - Default
   - TransparentFX

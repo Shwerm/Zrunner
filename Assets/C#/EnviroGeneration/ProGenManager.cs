@@ -76,18 +76,33 @@ public class ProGenManager : MonoBehaviour
 
     public void SpawnCorridor()
     {
-        // Spawn the corridor at the next Z position
-        int randomIndex = Random.Range(0, corridorSections.Length);
-        GameObject newCorridor = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
+        // Generate a random number between 1 and 10
+        int randomNum = Random.Range(1, 11); // Random.Range is exclusive for the max value
 
-        if (newCorridor == null)
+        GameObject newSection;
+
+        // Determine whether to spawn a corridor or an obstacle
+        if (randomNum >= 4)
+        {
+            // Pick a random corridor section
+            int randomIndex = Random.Range(0, corridorSections.Length);
+            newSection = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
+        }
+        else
+        {
+            // Pick a random obstacle section
+            int randomIndex = Random.Range(0, obstacleSections.Length);
+            newSection = Instantiate(obstacleSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
+        }
+
+        if (newSection == null)
         {
             Debug.LogError("Failed to instantiate the plane prefab!");
             return;
         }
 
-        // Add the new plane to the list
-        activeCorridors.Add(newCorridor);
+        // Add the new section to the list
+        activeCorridors.Add(newSection);
 
         // Increment the next spawn position
         nextSpawnZ += spawnDistance;
