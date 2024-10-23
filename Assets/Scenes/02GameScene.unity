@@ -699,6 +699,34 @@ PrefabInstance:
       propertyPath: dodgeSpeed
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 8344350038849929380, guid: ca86544090572564da7f727ae2abc496, type: 3}
+      propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 1139723944}
+    - target: {fileID: 8344350038849929380, guid: ca86544090572564da7f727ae2abc496, type: 3}
+      propertyPath: cameraTiltDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167627151412521968, guid: ca86544090572564da7f727ae2abc496, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167627151412521968, guid: ca86544090572564da7f727ae2abc496, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167627151412521968, guid: ca86544090572564da7f727ae2abc496, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167627151412521968, guid: ca86544090572564da7f727ae2abc496, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9167627151412521968, guid: ca86544090572564da7f727ae2abc496, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca86544090572564da7f727ae2abc496, type: 3}
 --- !u!1 &1139723942 stripped
@@ -13218,18 +13246,23 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1142832959}
-  m_VersionIndex: 22
+  m_VersionIndex: 25
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!20 &1139723944 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 8723242938734213296, guid: ca86544090572564da7f727ae2abc496, type: 3}
+  m_PrefabInstance: {fileID: 1139723941}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1142832959
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-27884
+  m_Name: pb_Mesh39500
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
