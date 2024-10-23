@@ -78,7 +78,7 @@ public class GameSceneUIManager : MonoBehaviour
     //Check Player Input
     private IEnumerator checkPlayerInput(KeyCode randomKey)
     {
-        while (true)
+        while (elapsedTime < lerpDuration)
         {
           if (Input.GetKeyDown(randomKey))
              {
@@ -88,7 +88,15 @@ public class GameSceneUIManager : MonoBehaviour
                 yield break; 
              }
           yield return null;
-         }
+        }
+
+        //If the player doesn't press the key within the time limit, handle the failure
+        if(elapsedTime >= lerpDuration)
+        {
+            Time.timeScale = 1f;
+            qteVisual.SetActive(false);
+            Debug.Log("QTE Failed");
+        }
     }
 
 

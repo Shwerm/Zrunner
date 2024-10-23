@@ -7,8 +7,9 @@ public class QTEManager : MonoBehaviour
     //Define Singleton instance
     public static QTEManager QTEManagerInstance { get; private set; }
 
-    //Reference to the GameSceneUIManager
+    //References
     private GameSceneUIManager gameSceneUIManager;
+    private PlayerManager playerManager;
 
 
     void Awake()
@@ -23,12 +24,19 @@ public class QTEManager : MonoBehaviour
             Destroy(this);
         }
 
-        //Assign the GameSceneUIManager instance
+        //Assign the instances
         gameSceneUIManager = GameSceneUIManager.gameSceneUIManagerInstance;
+        playerManager = PlayerManager.playerManagerInstance;
 
+        //Error Handling
         if(gameSceneUIManager == null)
         {
             Debug.LogError("GameSceneUIManager instance is not assigned!");
+        }
+
+        if(playerManager == null)
+        {
+            Debug.LogError("PlayerManager instance is not assigned!");
         }
     }
 
@@ -48,18 +56,24 @@ public class QTEManager : MonoBehaviour
         {
             case "Jump":
             Debug.Log("Jump QTE");
+            playerManager.Jump();
             break;
 
             case "Slide":
+            Time.timeScale = 1f;
             Debug.Log("Slide QTE");
             break;
 
             case "DodgeRight":
+            Time.timeScale = 1f;
             Debug.Log("DodgeRight QTE");
+            playerManager.Dodge(4);
             break;
 
             case "DodgeLeft":
+            Time.timeScale = 1f;
             Debug.Log("DodgeLeft QTE");
+            playerManager.Dodge(-4);
             break;
 
             default:
