@@ -1,161 +1,86 @@
-using UnityEngine;
-using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-/// <summary>
-/// Manages Quick Time Events (QTE) system including state handling and event dispatching.
-/// </summary>
 public class QTEManager : MonoBehaviour
 {
-    public static QTEManager Instance { get; private set; }
+    //Define Singleton instance
+    public static QTEManager QTEManagerInstance { get; private set; }
 
-    public event Action<string> OnQTEStarted;
-    public event Action<string> OnQTESucceeded;
-    public event Action<string> OnQTEFailed;
+    //References
+    private GameSceneUIManager gameSceneUIManager;
+    private PlayerManager playerManager;
 
-    [SerializeField] private float m_SlowMotionTimeScale = 0.2f;
-    
-    private GameSceneUIManager m_GameSceneUIManager;
-    private PlayerManager m_PlayerManager;
-    private QTEState m_CurrentState;
-    private readonly Dictionary<string, IQTEAction> m_QTEActions;
 
-    public QTEManager()
+    void Awake()
     {
-        m_QTEActions = new Dictionary<string, IQTEAction>
+        //Create Singleton Instance of the QTEManager
+        if (QTEManagerInstance == null)
         {
-            { "Jump", new JumpQTEAction() },
-            { "Slide", new SlideQTEAction() },
-            { "DodgeRight", new DodgeRightQTEAction() },
-            { "DodgeLeft", new DodgeLeftQTEAction() }
-        };
-    }
-
-    private void Awake()
-    {
-        InitializeSingleton();
-        InitializeComponents();
-        SetState(new IdleQTEState(this));
-    }
-
-    private void InitializeSingleton()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            QTEManagerInstance = this;
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(this);
         }
-    }
 
-    private void InitializeComponents()
-    {
-        m_GameSceneUIManager = FindObjectOfType<GameSceneUIManager>();
-        m_PlayerManager = PlayerManager.playerManagerInstance;
+        //Assign the instances
+        gameSceneUIManager = GameSceneUIManager.gameSceneUIManagerInstance;
+        playerManager = PlayerManager.playerManagerInstance;
 
-        if (m_GameSceneUIManager == null || m_PlayerManager == null)
+        //Error Handling
+        if(gameSceneUIManager == null)
         {
-            Debug.LogError("[QTEManager] Required components not found!");
-            enabled = false;
+            Debug.LogError("GameSceneUIManager instance is not assigned!");
         }
-    }
 
-    public void QTEStart()
-    {
-        m_CurrentState.OnQTEStart();
-    }
-
-    public void QTESuccess(string activeQTE)
-    {
-        if (m_QTEActions.TryGetValue(activeQTE, out IQTEAction action))
+        if(playerManager == null)
         {
-            action.Execute(m_PlayerManager);
-            OnQTESucceeded?.Invoke(activeQTE);
-            ResetTimeScale();
-        }
-        else
-        {
-            Debug.LogError($"[QTEManager] Invalid QTE type: {activeQTE}");
+            Debug.LogError("PlayerManager instance is not assigned!");
         }
     }
 
-    private void SetState(QTEState newState)
-    {
-        m_CurrentState = newState;
-    }
 
-    private void ResetTimeScale()
-    {
-        Time.timeScale = 1f;
-    }
-
-    private void OnDestroy()
-    {
-        OnQTEStarted = null;
-        OnQTESucceeded = null;
-        OnQTEFailed = null;
-    }
-}
-
-#region QTE States
-public abstract class QTEState
-{
-    protected readonly QTEManager Manager;
-
-    protected QTEState(QTEManager manager)
-    {
-        Manager = manager;
-    }
-
-    public abstract void OnQTEStart();
-}
-
-public class IdleQTEState : QTEState
-{
-    public IdleQTEState(QTEManager manager) : base(manager) { }
-
-    public override void OnQTEStart()
+    //QTE Start
+    public void qteStart()
     {
         Time.timeScale = 0.2f;
-        Manager.OnQTEStarted?.Invoke("QTE_START");
+        gameSceneUIManager.qteVisualTrigger();
     }
-}
-#endregion
 
-#region QTE Actions
-public interface IQTEAction
-{
-    void Execute(PlayerManager player);
-}
 
-public class JumpQTEAction : IQTEAction
-{
-    public void Execute(PlayerManager player) => player.Jump();
-}
-
-public class SlideQTEAction : IQTEAction
-{
-    public void Execute(PlayerManager player) { /* Implement slide logic */ }
-}
-
-public class DodgeRightQTEAction : IQTEAction
-{
-    public void Execute(PlayerManager player)
+    //QTE Success
+    public void qteSuccess(string activeQTE)
     {
-        player.Dodge(4);
-        player.LookLeft();
-    }
-}
+        switch (activeQTE)
+        {
+            case "Jump":
+            Debug.Log("Jump QTE");
+            playerManager.Jump();
+            break;
 
-public class DodgeLeftQTEAction : IQTEAction
-{
-    public void Execute(PlayerManager player)
-    {
-        player.Dodge(-4);
-        player.LookRight();
+            case "Slide":
+            Time.timeScale = 1f;
+            Debug.Log("Slide QTE");
+            break;
+
+            case "DodgeRight":
+            Time.timeScale = 1f;
+            Debug.Log("DodgeRight QTE");
+            playerManager.Dodge(4);
+            playerManager.LookLeft();
+            break;
+
+            case "DodgeLeft":
+            Time.timeScale = 1f;
+            Debug.Log("DodgeLeft QTE");
+            playerManager.Dodge(-4);
+            playerManager.LookRight();
+            break;
+
+            default:
+            Debug.Log("Invalid QTE Type");
+            break;
+        }
     }
 }
-#endregion
