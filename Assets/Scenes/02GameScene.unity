@@ -707,10 +707,6 @@ PrefabInstance:
       propertyPath: cameraTiltDuration
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 8723242938734213296, guid: ca86544090572564da7f727ae2abc496, type: 3}
-      propertyPath: field of view
-      value: 75
-      objectReference: {fileID: 0}
     - target: {fileID: 9167627151412521968, guid: ca86544090572564da7f727ae2abc496, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -13250,7 +13246,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1142832959}
-  m_VersionIndex: 28
+  m_VersionIndex: 25
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -13266,7 +13262,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh24334
+  m_Name: pb_Mesh23592
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
