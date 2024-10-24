@@ -178,13 +178,15 @@ public class PlayerManager : MonoBehaviour
     }
 
 
+
+    //Camera Movements
     private IEnumerator TiltCameraDown()
     {
-        // Store the original rotation
+        //Store the original rotation
         Quaternion originalRotation = playerCamera.transform.rotation;
         Quaternion targetRotation = Quaternion.Euler(90f, playerCamera.transform.eulerAngles.y, playerCamera.transform.eulerAngles.z);
 
-        // Tilt up to 90 degrees
+        //Tilt up to 90 degrees
         float elapsedTime = 0f;
         while (elapsedTime < cameraTiltDuration)
         {
@@ -192,9 +194,9 @@ public class PlayerManager : MonoBehaviour
             playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
             yield return null;
         }
-        playerCamera.transform.rotation = targetRotation; // Ensure it ends at exactly 90 degrees
+        playerCamera.transform.rotation = targetRotation;
 
-        // Tilt back to original rotation
+        //Tilt back to original rotation
         elapsedTime = 0f;
         while (elapsedTime < cameraTiltDuration)
         {
@@ -202,6 +204,82 @@ public class PlayerManager : MonoBehaviour
             playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
             yield return null;
         }
-        playerCamera.transform.rotation = originalRotation; // Ensure it ends at original rotation
+        playerCamera.transform.rotation = originalRotation;
+    }
+
+
+    public void LookRight()
+    {
+        //Start the camera tilt coroutine
+        if (cameraTiltCoroutine != null)
+        {
+            StopCoroutine(cameraTiltCoroutine); //Stop any existing tilt before starting a new one
+        }
+        cameraTiltCoroutine = StartCoroutine(TiltCameraRight());
+    }
+
+    private IEnumerator TiltCameraRight()
+    {
+        //Store the original rotation
+        Quaternion originalRotation = playerCamera.transform.rotation;
+        Quaternion targetRotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x, 90f, playerCamera.transform.eulerAngles.z);
+
+        //Tilt to 90 degrees on the Y-axis
+        float elapsedTime = 0f;
+        while (elapsedTime < cameraTiltDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
+            yield return null;
+        }
+        playerCamera.transform.rotation = targetRotation; //Ensure it ends at exactly 90 degrees
+
+        //Tilt back to the original rotation
+        elapsedTime = 0f;
+        while (elapsedTime < cameraTiltDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
+            yield return null;
+        }
+        playerCamera.transform.rotation = originalRotation; //Ensure it ends at original rotation
+    }
+
+
+    public void LookLeft()
+    {
+        //Start the camera tilt coroutine
+        if (cameraTiltCoroutine != null)
+        {
+            StopCoroutine(cameraTiltCoroutine); //Stop any existing tilt before starting a new one
+        }
+        cameraTiltCoroutine = StartCoroutine(TiltCameraLeft());
+    }
+
+    private IEnumerator TiltCameraLeft()
+    {
+        //Store the original rotation
+        Quaternion originalRotation = playerCamera.transform.rotation;
+        Quaternion targetRotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x, -90f, playerCamera.transform.eulerAngles.z);
+
+        //Tilt to 90 degrees on the Y-axis
+        float elapsedTime = 0f;
+        while (elapsedTime < cameraTiltDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
+            yield return null;
+        }
+        playerCamera.transform.rotation = targetRotation; //Ensure it ends at exactly 90 degrees
+
+        //Tilt back to the original rotation
+        elapsedTime = 0f;
+        while (elapsedTime < cameraTiltDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
+            yield return null;
+        }
+        playerCamera.transform.rotation = originalRotation; //Ensure it ends at original rotation
     }
 }

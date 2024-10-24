@@ -68,12 +68,14 @@ public class QTEManager : MonoBehaviour
             Time.timeScale = 1f;
             Debug.Log("DodgeRight QTE");
             playerManager.Dodge(4);
+            playerManager.LookLeft();
             break;
 
             case "DodgeLeft":
             Time.timeScale = 1f;
             Debug.Log("DodgeLeft QTE");
             playerManager.Dodge(-4);
+            playerManager.LookRight();
             break;
 
             default:
