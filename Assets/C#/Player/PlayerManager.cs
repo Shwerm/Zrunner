@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     //Define Singleton instance
-    public static PlayerManager playerManagerInstance { get; private set; }
+    public static PlayerManager Instance { get; private set; }
 
     [Header("Player Settings")]
     public float moveSpeed = 8f;
@@ -21,16 +21,16 @@ public class PlayerManager : MonoBehaviour
     private float originalXPosition;
 
     public Camera playerCamera; 
-    public float cameraTiltDuration = 1f;
+    private float cameraTiltDuration = 1.1f;
     private Coroutine cameraTiltCoroutine; 
 
 
     //Create Singleton Instance of the Player Manager
     private void Awake()
     {
-        if (playerManagerInstance == null)
+        if (Instance == null)
         {
-            playerManagerInstance = this;
+            Instance = this;
         }
         else
         {

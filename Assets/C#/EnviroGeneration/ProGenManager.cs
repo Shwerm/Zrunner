@@ -2,30 +2,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages procedural generation of the game environment including corridors and obstacles.
+/// </summary>
 public class ProGenManager : MonoBehaviour
 {
-    //Define Singleton instance of the ProGenManager
-    public static ProGenManager proGenManagerInstance { get; private set; }
+    #region Singleton
+    public static ProGenManager Instance { get; private set; }
+    #endregion
 
-    [Header("Plane Spawning Settings")]
-    public GameObject[] corridorSections;
-    public GameObject[] obstacleSections;
-    public float spawnDistance = 5f;
+    #region Serialized Fields
+    [Header("Generation Settings")]
+    [SerializeField] private int initialCorridorCount = 4;
+    [SerializeField] private int maxActiveCorridors = 5;
+    [SerializeField] private float chunkUnloadDelay = 3f;
+    
+    [Header("Spawn Settings")]
+    [SerializeField] [Range(1, 10)] private int spawnChanceThreshold = 4;
+    [SerializeField] private float spawnDistance = 5f;
+    
+    [Header("Prefabs")]
+    [SerializeField] private GameObject initialCorridorSection;
+    [SerializeField] private GameObject[] corridorSections;
+    [SerializeField] private GameObject[] obstacleSections;
+    #endregion
 
-    //List to manage corridor sections
+    #region Private Fields
     private List<GameObject> activeCorridors = new List<GameObject>();
+    private float nextSpawnZ;
+    private Coroutine streamChunkCoroutine;
+    #endregion
 
-    //Reference to the manually placed initial corridor section
-    public GameObject initialCorridorSection;
-    private float nextSpawnZ = 0f;
-
-
-    void Awake()
+    /// <summary>
+    /// Initializes the singleton instance on Awake
+    /// </summary>
+    private void Awake()
     {
-        //Create Singleton Instance of the ProGenManager
-        if (proGenManagerInstance == null)
+        if (Instance == null)
         {
-            proGenManagerInstance = this;
+            Instance = this;
         }
         else
         {
@@ -33,26 +48,23 @@ public class ProGenManager : MonoBehaviour
         }
     }
 
-
-    void Start()
+    /// <summary>
+    /// Initializes the corridor generation system
+    /// </summary>
+    private void Start()
     {
-        //Ensure the manually placed section is tracked
         TrackInitialCorridor();
-
-        //Spawn additional initial corridor sections with correct spacing
-        //Adjusted to spawn 4 sections from the start
-        SpawnInitialCorridors(4);
+        SpawnInitialCorridors(initialCorridorCount);
     }
 
-
-    void TrackInitialCorridor()
+    /// <summary>
+    /// Sets up tracking for the manually placed initial corridor section
+    /// </summary>
+    private void TrackInitialCorridor()
     {
         if (initialCorridorSection != null)
         {
-            //Add the manually placed section to the list and set the next spawn position after it
             activeCorridors.Add(initialCorridorSection);
-
-            //Set nextSpawnZ based on the initial corridor's Z position + spawn distance
             nextSpawnZ = initialCorridorSection.transform.position.z + spawnDistance;
         }
         else
@@ -61,62 +73,62 @@ public class ProGenManager : MonoBehaviour
         }
     }
 
-
-    void SpawnInitialCorridors(int numberOfSections)
+    /// <summary>
+    /// Spawns the initial set of corridor sections
+    /// </summary>
+    /// <param name="numberOfSections">Number of sections to spawn initially</param>
+    private void SpawnInitialCorridors(int numberOfSections)
     {
-        //Spawn the specified number of corridor sections initially
         for (int i = 0; i < numberOfSections; i++)
         {
             SpawnCorridor();
         }
     }
 
-
-    //Streaming Chunk Unloader Coroutine
-    IEnumerator StreamChunkUnload()
+    /// <summary>
+    /// <summary>
+    /// Coroutine to handle the removal of old corridor sections
+    /// </summary>
+    private IEnumerator StreamChunkUnload()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(chunkUnloadDelay);
         GameObject oldestCorridor = activeCorridors[0];
         activeCorridors.RemoveAt(0);
         Destroy(oldestCorridor);
     }
 
-    //Corridor Spawner
+    /// <summary>
+    /// Spawns a new corridor or obstacle section based on random probability
+    /// 70% chance for corridor, 30% chance for obstacle
+    /// </summary>
     public void SpawnCorridor()
     {
-        //Generate a random number between 1 and 10
-        int randomNum = Random.Range(1, 11);
-
+        int randomNum = Random.Range(1, 10);
         GameObject newSection;
 
-        //Determine whether to spawn a corridor or an obstacle
-        if (randomNum >= 4)
+        // 70% chance for corridor, 30% chance for obstacle
+        if (randomNum >= spawnChanceThreshold)
         {
-            //Pick a random corridor section
             int randomIndex = Random.Range(0, corridorSections.Length);
             newSection = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
         }
         else
         {
-            //Pick a random obstacle section
             int randomIndex = Random.Range(0, obstacleSections.Length);
             newSection = Instantiate(obstacleSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
         }
 
         if (newSection == null)
         {
-            Debug.LogError("Failed to instantiate the plane prefab!");
+            Debug.LogError("Failed to instantiate the section prefab!");
             return;
         }
 
-        //Add the new section to the list
         activeCorridors.Add(newSection);
-
-        //Increment the next spawn position
         nextSpawnZ += spawnDistance;
 
-        //Remove the oldest plane only when there are more than 5 active planes
-        if (activeCorridors.Count > 5)
+        // Maintain maximum of 5 active sections
+        if (activeCorridors.Count > maxActiveCorridors)
         {
             StartCoroutine(StreamChunkUnload());
         }

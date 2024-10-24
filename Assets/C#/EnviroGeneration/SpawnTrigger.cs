@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class SpawnTrigger : MonoBehaviour
 {
-    public GameObject player;
+    private GameObject player;
     //References
     private PlayerManager playerManager;
 
     void Awake()
     {
         //Assign the instances
-        playerManager = PlayerManager.playerManagerInstance;
+        playerManager = PlayerManager.Instance;
 
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
@@ -30,7 +30,7 @@ public class SpawnTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            ProGenManager spawner = ProGenManager.proGenManagerInstance;
+            ProGenManager spawner = ProGenManager.Instance;
 
             //Trigger the next corridor to spawn
             if (spawner != null)

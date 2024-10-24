@@ -41,8 +41,8 @@ public class GameSceneUIManager : MonoBehaviour
     public void Start()
     {
         //Assign references to Player Manager and QTE Manager
-        playerManager = PlayerManager.playerManagerInstance;
-        qteManager = QTEManager.QTEManagerInstance;
+        playerManager = PlayerManager.Instance;
+        qteManager = QTEManager.Instance;
 
         //Error Handling
         if (playerManager == null)

@@ -5,7 +5,7 @@ using UnityEngine;
 public class QTEManager : MonoBehaviour
 {
     //Define Singleton instance
-    public static QTEManager QTEManagerInstance { get; private set; }
+    public static QTEManager Instance { get; private set; }
 
     //References
     private GameSceneUIManager gameSceneUIManager;
@@ -15,9 +15,9 @@ public class QTEManager : MonoBehaviour
     void Awake()
     {
         //Create Singleton Instance of the QTEManager
-        if (QTEManagerInstance == null)
+        if (Instance == null)
         {
-            QTEManagerInstance = this;
+            Instance = this;
         }
         else
         {
@@ -26,7 +26,7 @@ public class QTEManager : MonoBehaviour
 
         //Assign the instances
         gameSceneUIManager = GameSceneUIManager.gameSceneUIManagerInstance;
-        playerManager = PlayerManager.playerManagerInstance;
+        playerManager = PlayerManager.Instance;
 
         //Error Handling
         if(gameSceneUIManager == null)
