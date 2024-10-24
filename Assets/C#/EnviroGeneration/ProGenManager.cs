@@ -1,28 +1,47 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class ProGenManager : MonoBehaviour
 {
-    //Define Singleton instance of the ProGenManager
+    #region Singleton
     public static ProGenManager proGenManagerInstance { get; private set; }
+    #endregion
 
-    [Header("Plane Spawning Settings")]
-    public GameObject[] corridorSections;
-    public GameObject[] obstacleSections;
-    public float spawnDistance = 5f;
+    #region Events
+    public event Action<GameObject> OnCorridorSpawned;
+    public event Action<GameObject> OnCorridorDespawned;
+    #endregion
 
-    //List to manage corridor sections
+    #region Configuration
+    [SerializeField] private ProGenConfiguration config;
+    [SerializeField] private GameObject initialCorridorSection;
+    #endregion
+
+    #region Private Fields
+    private Dictionary<string, Queue<GameObject>> corridorPool;
     private List<GameObject> activeCorridors = new List<GameObject>();
-
-    //Reference to the manually placed initial corridor section
-    public GameObject initialCorridorSection;
     private float nextSpawnZ = 0f;
+    private Queue<bool> obstaclePattern;
+    #endregion
 
-
-    void Awake()
+    private void Awake()
     {
-        //Create Singleton Instance of the ProGenManager
+        InitializeSingleton();
+        InitializeObjectPool();
+    }
+
+    private void Start()
+    {
+        TrackInitialCorridor();
+        SpawnInitialCorridors();
+        GenerateObstaclePattern(10); // Generate initial pattern
+    }
+
+    #region Initialization Methods
+    private void InitializeSingleton()
+    {
         if (proGenManagerInstance == null)
         {
             proGenManagerInstance = this;
@@ -33,27 +52,50 @@ public class ProGenManager : MonoBehaviour
         }
     }
 
-
-    void Start()
+    private void InitializeObjectPool()
     {
-        //Ensure the manually placed section is tracked
-        TrackInitialCorridor();
+        corridorPool = new Dictionary<string, Queue<GameObject>>();
+        
+        // Initialize pools for corridor sections
+        foreach (GameObject corridor in config.corridorSections)
+        {
+            Queue<GameObject> pool = new Queue<GameObject>();
+            for (int i = 0; i < config.maxActiveCorridors; i++)
+            {
+                GameObject obj = CreatePoolObject(corridor);
+                pool.Enqueue(obj);
+            }
+            corridorPool.Add(corridor.name, pool);
+        }
 
-        //Spawn additional initial corridor sections with correct spacing
-        //Adjusted to spawn 4 sections from the start
-        SpawnInitialCorridors(4);
+        // Initialize pools for obstacle sections
+        foreach (GameObject obstacle in config.obstacleSections)
+        {
+            Queue<GameObject> pool = new Queue<GameObject>();
+            for (int i = 0; i < config.maxActiveCorridors; i++)
+            {
+                GameObject obj = CreatePoolObject(obstacle);
+                pool.Enqueue(obj);
+            }
+            corridorPool.Add(obstacle.name, pool);
+        }
     }
 
+    private GameObject CreatePoolObject(GameObject prefab)
+    {
+        GameObject obj = Instantiate(prefab);
+        obj.SetActive(false);
+        return obj;
+    }
+    #endregion
 
-    void TrackInitialCorridor()
+    #region Corridor Management
+    private void TrackInitialCorridor()
     {
         if (initialCorridorSection != null)
         {
-            //Add the manually placed section to the list and set the next spawn position after it
             activeCorridors.Add(initialCorridorSection);
-
-            //Set nextSpawnZ based on the initial corridor's Z position + spawn distance
-            nextSpawnZ = initialCorridorSection.transform.position.z + spawnDistance;
+            nextSpawnZ = initialCorridorSection.transform.position.z + config.spawnDistance;
         }
         else
         {
@@ -61,64 +103,88 @@ public class ProGenManager : MonoBehaviour
         }
     }
 
-
-    void SpawnInitialCorridors(int numberOfSections)
+    private void SpawnInitialCorridors()
     {
-        //Spawn the specified number of corridor sections initially
-        for (int i = 0; i < numberOfSections; i++)
+        for (int i = 0; i < config.initialCorridorCount; i++)
         {
             SpawnCorridor();
         }
     }
 
-
-    //Streaming Chunk Unloader Coroutine
-    IEnumerator StreamChunkUnload()
-    {
-        yield return new WaitForSeconds(3);
-        GameObject oldestCorridor = activeCorridors[0];
-        activeCorridors.RemoveAt(0);
-        Destroy(oldestCorridor);
-    }
-
-    //Corridor Spawner
     public void SpawnCorridor()
     {
-        //Generate a random number between 1 and 10
-        int randomNum = Random.Range(1, 11);
+        bool isObstacle = obstaclePattern.Dequeue();
+        GameObject[] sectionArray = isObstacle ? config.obstacleSections : config.corridorSections;
+        
+        int randomIndex = UnityEngine.Random.Range(0, sectionArray.Length);
+        GameObject prefab = sectionArray[randomIndex];
+        
+        // Get object from pool
+        GameObject newSection = GetPooledObject(prefab.name);
+        newSection.transform.position = new Vector3(0, 0, nextSpawnZ);
+        newSection.SetActive(true);
 
-        GameObject newSection;
-
-        //Determine whether to spawn a corridor or an obstacle
-        if (randomNum >= 4)
-        {
-            //Pick a random corridor section
-            int randomIndex = Random.Range(0, corridorSections.Length);
-            newSection = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
-        }
-        else
-        {
-            //Pick a random obstacle section
-            int randomIndex = Random.Range(0, obstacleSections.Length);
-            newSection = Instantiate(obstacleSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
-        }
-
-        if (newSection == null)
-        {
-            Debug.LogError("Failed to instantiate the plane prefab!");
-            return;
-        }
-
-        //Add the new section to the list
         activeCorridors.Add(newSection);
+        nextSpawnZ += config.spawnDistance;
+        
+        OnCorridorSpawned?.Invoke(newSection);
 
-        //Increment the next spawn position
-        nextSpawnZ += spawnDistance;
-
-        //Remove the oldest plane only when there are more than 5 active planes
-        if (activeCorridors.Count > 5)
+        if (activeCorridors.Count > config.maxActiveCorridors)
         {
-            StartCoroutine(StreamChunkUnload());
+            _ = UnloadChunkAsync(activeCorridors[0]);
+        }
+
+        // Regenerate pattern if needed
+        if (obstaclePattern.Count == 0)
+        {
+            GenerateObstaclePattern(10);
         }
     }
+
+    private GameObject GetPooledObject(string prefabName)
+    {
+        if (corridorPool.TryGetValue(prefabName, out Queue<GameObject> pool))
+        {
+            if (pool.Count > 0)
+            {
+                return pool.Dequeue();
+            }
+        }
+        
+        Debug.LogWarning($"Pool for {prefabName} is empty, creating new object");
+        return CreatePoolObject(Array.Find(config.corridorSections, x => x.name == prefabName));
+    }
+    #endregion
+
+    #region Async Operations
+    private async Task UnloadChunkAsync(GameObject corridor)
+    {
+        await Task.Delay(3000);
+        corridor.SetActive(false);
+        
+        // Return to pool
+        string prefabName = corridor.name.Replace("(Clone)", "").Trim();
+        corridorPool[prefabName].Enqueue(corridor);
+        
+        activeCorridors.Remove(corridor);
+        OnCorridorDespawned?.Invoke(corridor);
+    }
+    #endregion
+
+    #region Pattern Generation
+    private void GenerateObstaclePattern(int length)
+    {
+        obstaclePattern = new Queue<bool>();
+        float previousValue = 0;
+        
+        for (int i = 0; i < length; i++)
+        {
+            // Use Perlin noise for more natural pattern generation
+            float noise = Mathf.PerlinNoise(previousValue, 0);
+            bool isObstacle = noise < (config.obstacleChanceThreshold / 10f);
+            obstaclePattern.Enqueue(isObstacle);
+            previousValue += 0.5f;
+        }
+    }
+    #endregion
 }

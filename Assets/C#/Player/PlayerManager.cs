@@ -21,7 +21,7 @@ public class PlayerManager : MonoBehaviour
     private float originalXPosition;
 
     public Camera playerCamera; 
-    public float cameraTiltDuration = 1f;
+    private float cameraTiltDuration = 1.1f;
     private Coroutine cameraTiltCoroutine; 
 
 
