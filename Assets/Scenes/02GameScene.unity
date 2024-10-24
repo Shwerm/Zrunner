@@ -13464,23 +13464,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f40950461e359454d82f219821d55e08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  corridorSections:
-  - {fileID: 8526306688583685847, guid: c2400463b5880f948a71482c3ad35eb2, type: 3}
-  - {fileID: 8526306688583685847, guid: a85870444bc71b54fbfe52758bec53c8, type: 3}
-  - {fileID: 8526306688583685847, guid: f0266ea1c4b32024dac1e5904e8a10d9, type: 3}
-  - {fileID: 8526306688583685847, guid: 1c02bad4fae50024d8252c6eb7fd2fd0, type: 3}
-  - {fileID: 8526306688583685847, guid: f45287ee28cf6f946945dcc1d826fe7f, type: 3}
-  - {fileID: 8526306688583685847, guid: 8f00b30076226a949a4232a033f00f72, type: 3}
-  - {fileID: 8526306688583685847, guid: 33eee463aa4cb534f9769137b156499f, type: 3}
-  - {fileID: 8526306688583685847, guid: 36a2204b45158a54681befcea55db4a5, type: 3}
-  - {fileID: 8526306688583685847, guid: 881c660ea6de2424f9afdb3e68cd1853, type: 3}
-  - {fileID: 8526306688583685847, guid: 1bbe7dfb514f93e4bb356b4415fe218e, type: 3}
-  obstacleSections:
-  - {fileID: 8526306688583685847, guid: 120ae705980396e48b71d867038b1989, type: 3}
-  - {fileID: 8526306688583685847, guid: 1dfa0ecd271bd5f45935c8c3f27a5934, type: 3}
-  - {fileID: 8526306688583685847, guid: 09b4a11e659a33b409c2dd6056187a71, type: 3}
-  spawnDistance: 25
-  initialCorridorSection: {fileID: 268596794}
+  _config:
+    CorridorSections:
+    - {fileID: 8526306688583685847, guid: c2400463b5880f948a71482c3ad35eb2, type: 3}
+    - {fileID: 8526306688583685847, guid: a85870444bc71b54fbfe52758bec53c8, type: 3}
+    - {fileID: 8526306688583685847, guid: f0266ea1c4b32024dac1e5904e8a10d9, type: 3}
+    - {fileID: 8526306688583685847, guid: 1c02bad4fae50024d8252c6eb7fd2fd0, type: 3}
+    - {fileID: 8526306688583685847, guid: f45287ee28cf6f946945dcc1d826fe7f, type: 3}
+    - {fileID: 8526306688583685847, guid: 8f00b30076226a949a4232a033f00f72, type: 3}
+    - {fileID: 8526306688583685847, guid: 33eee463aa4cb534f9769137b156499f, type: 3}
+    - {fileID: 8526306688583685847, guid: 36a2204b45158a54681befcea55db4a5, type: 3}
+    - {fileID: 8526306688583685847, guid: 881c660ea6de2424f9afdb3e68cd1853, type: 3}
+    - {fileID: 8526306688583685847, guid: 1bbe7dfb514f93e4bb356b4415fe218e, type: 3}
+    ObstacleSections:
+    - {fileID: 8526306688583685847, guid: 120ae705980396e48b71d867038b1989, type: 3}
+    - {fileID: 8526306688583685847, guid: 1dfa0ecd271bd5f45935c8c3f27a5934, type: 3}
+    - {fileID: 8526306688583685847, guid: 09b4a11e659a33b409c2dd6056187a71, type: 3}
+    SpawnDistance: 25
+    InitialCorridorSection: {fileID: 268596794}
 --- !u!1 &1420392451
 GameObject:
   m_ObjectHideFlags: 0

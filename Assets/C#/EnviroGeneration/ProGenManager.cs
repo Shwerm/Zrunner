@@ -1,124 +1,142 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
+/// <summary>
+/// Manages procedural generation of the game environment including corridors and obstacles.
+/// Implements object pooling for efficient resource management.
+/// </summary>
 public class ProGenManager : MonoBehaviour
 {
-    //Define Singleton instance of the ProGenManager
-    public static ProGenManager proGenManagerInstance { get; private set; }
+    public static ProGenManager Instance { get; private set; }
 
-    [Header("Plane Spawning Settings")]
-    public GameObject[] corridorSections;
-    public GameObject[] obstacleSections;
-    public float spawnDistance = 5f;
+    [SerializeField] private SpawnConfiguration m_Config;
 
-    //List to manage corridor sections
-    private List<GameObject> activeCorridors = new List<GameObject>();
+    private const int k_InitialCorridorCount = 4;
+    private const int k_MaxActiveCorridors = 5;
+    private const float k_UnloadDelay = 3f;
+    private const int k_ObstacleSpawnThreshold = 4;
+    private const int k_RandomRangeMax = 11;
 
-    //Reference to the manually placed initial corridor section
-    public GameObject initialCorridorSection;
-    private float nextSpawnZ = 0f;
+    private readonly List<GameObject> m_ActiveCorridors = new List<GameObject>();
+    private readonly Dictionary<string, Queue<GameObject>> m_CorridorPools = new Dictionary<string, Queue<GameObject>>();
+    private readonly Dictionary<string, Queue<GameObject>> m_ObstaclePools = new Dictionary<string, Queue<GameObject>>();
+    
+    private float m_NextSpawnZ;
+    private bool m_IsInitialized;
 
-
-    void Awake()
+    private void Awake()
     {
-        //Create Singleton Instance of the ProGenManager
-        if (proGenManagerInstance == null)
+        InitializeSingleton();
+        InitializeObjectPools();
+        InitializeStartingCorridor();
+        SpawnInitialCorridors(k_InitialCorridorCount);
+        m_IsInitialized = true;
+    }
+
+    private void InitializeSingleton()
+    {
+        if (Instance == null)
         {
-            proGenManagerInstance = this;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 
-
-    void Start()
+    private void InitializeObjectPools()
     {
-        //Ensure the manually placed section is tracked
-        TrackInitialCorridor();
-
-        //Spawn additional initial corridor sections with correct spacing
-        //Adjusted to spawn 4 sections from the start
-        SpawnInitialCorridors(4);
-    }
-
-
-    void TrackInitialCorridor()
-    {
-        if (initialCorridorSection != null)
+        foreach (var corridor in m_Config.CorridorSections)
         {
-            //Add the manually placed section to the list and set the next spawn position after it
-            activeCorridors.Add(initialCorridorSection);
-
-            //Set nextSpawnZ based on the initial corridor's Z position + spawn distance
-            nextSpawnZ = initialCorridorSection.transform.position.z + spawnDistance;
+            CreatePool(corridor, 5, m_CorridorPools);
         }
-        else
+
+        foreach (var obstacle in m_Config.ObstacleSections)
         {
-            Debug.LogError("Initial corridor section is not assigned!");
+            CreatePool(obstacle, 3, m_ObstaclePools);
         }
     }
 
-
-    void SpawnInitialCorridors(int numberOfSections)
+    private void CreatePool(GameObject prefab, int initialSize, Dictionary<string, Queue<GameObject>> poolDictionary)
     {
-        //Spawn the specified number of corridor sections initially
-        for (int i = 0; i < numberOfSections; i++)
+        var pool = new Queue<GameObject>();
+        for (int i = 0; i < initialSize; i++)
         {
-            SpawnCorridor();
+            var obj = Instantiate(prefab);
+            obj.SetActive(false);
+            pool.Enqueue(obj);
         }
+        poolDictionary[prefab.name] = pool;
     }
 
-
-    //Streaming Chunk Unloader Coroutine
-    IEnumerator StreamChunkUnload()
+    private GameObject GetPooledObject(GameObject prefab, Dictionary<string, Queue<GameObject>> poolDictionary)
     {
-        yield return new WaitForSeconds(3);
-        GameObject oldestCorridor = activeCorridors[0];
-        activeCorridors.RemoveAt(0);
-        Destroy(oldestCorridor);
+        if (!poolDictionary.ContainsKey(prefab.name))
+        {
+            CreatePool(prefab, 2, poolDictionary);
+        }
+
+        var pool = poolDictionary[prefab.name];
+        if (pool.Count == 0)
+        {
+            var obj = Instantiate(prefab);
+            pool.Enqueue(obj);
+        }
+
+        var pooledObject = pool.Dequeue();
+        pooledObject.SetActive(true);
+        return pooledObject;
     }
 
-    //Corridor Spawner
     public void SpawnCorridor()
     {
-        //Generate a random number between 1 and 10
-        int randomNum = Random.Range(1, 11);
+        if (!m_IsInitialized) return;
 
+        int randomNum = UnityEngine.Random.Range(1, k_RandomRangeMax);
+        GameObject sectionPrefab;
         GameObject newSection;
 
-        //Determine whether to spawn a corridor or an obstacle
-        if (randomNum >= 4)
+        if (randomNum >= k_ObstacleSpawnThreshold)
         {
-            //Pick a random corridor section
-            int randomIndex = Random.Range(0, corridorSections.Length);
-            newSection = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
+            sectionPrefab = m_Config.CorridorSections[UnityEngine.Random.Range(0, m_Config.CorridorSections.Length)];
+            newSection = GetPooledObject(sectionPrefab, m_CorridorPools);
         }
         else
         {
-            //Pick a random obstacle section
-            int randomIndex = Random.Range(0, obstacleSections.Length);
-            newSection = Instantiate(obstacleSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
+            sectionPrefab = m_Config.ObstacleSections[UnityEngine.Random.Range(0, m_Config.ObstacleSections.Length)];
+            newSection = GetPooledObject(sectionPrefab, m_ObstaclePools);
         }
 
-        if (newSection == null)
+        newSection.transform.position = new Vector3(0f, 0f, m_NextSpawnZ);
+        m_ActiveCorridors.Add(newSection);
+        m_NextSpawnZ += m_Config.SpawnDistance;
+
+        if (m_ActiveCorridors.Count > k_MaxActiveCorridors)
         {
-            Debug.LogError("Failed to instantiate the plane prefab!");
-            return;
+            StartCoroutine(UnloadOldestCorridor());
         }
+    }
 
-        //Add the new section to the list
-        activeCorridors.Add(newSection);
-
-        //Increment the next spawn position
-        nextSpawnZ += spawnDistance;
-
-        //Remove the oldest plane only when there are more than 5 active planes
-        if (activeCorridors.Count > 5)
+    private void ReturnToPool(GameObject obj)
+    {
+        obj.SetActive(false);
+        if (obj.CompareTag("Corridor"))
         {
-            StartCoroutine(StreamChunkUnload());
+            m_CorridorPools[obj.name].Enqueue(obj);
         }
+        else
+        {
+            m_ObstaclePools[obj.name].Enqueue(obj);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        m_IsInitialized = false;
+        m_CorridorPools.Clear();
+        m_ObstaclePools.Clear();
     }
 }
