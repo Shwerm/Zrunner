@@ -15,7 +15,7 @@ public class PlayerCameraManager : MonoBehaviour
 
     #region Camera Settings
     [SerializeField]private Camera playerCamera;
-    private float cameraTiltDuration = 1.1f;
+    [SerializeField]private float cameraTiltDuration = 1.1f;
     public Coroutine cameraTiltCoroutine;
     #endregion
 
@@ -58,6 +58,8 @@ public class PlayerCameraManager : MonoBehaviour
             yield return null;
         }
         playerCamera.transform.rotation = targetRotation;
+
+        yield return new WaitForSeconds(0.6f);
 
         //Tilt back to original rotation
         elapsedTime = 0f;
@@ -103,6 +105,8 @@ public class PlayerCameraManager : MonoBehaviour
         }
         playerCamera.transform.rotation = targetRotation; //Ensure it ends at exactly 90 degrees
 
+        yield return new WaitForSeconds(1.5f);
+
         //Tilt back to the original rotation
         elapsedTime = 0f;
         while (elapsedTime < cameraTiltDuration)
@@ -146,6 +150,8 @@ public class PlayerCameraManager : MonoBehaviour
             yield return null;
         }
         playerCamera.transform.rotation = targetRotation; //Ensure it ends at exactly 90 degrees
+
+        yield return new WaitForSeconds(1.5f);
 
         //Tilt back to the original rotation
         elapsedTime = 0f;
