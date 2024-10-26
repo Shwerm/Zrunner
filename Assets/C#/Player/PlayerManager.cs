@@ -2,30 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Manages player core functionality including movement, collision handling, and QTE interactions.
+/// Handles forward movement, dodge mechanics, jumping, and obstacle detection.
+/// Dependencies: GameManager.cs, QTEManager.cs, PlayerCameraManager.cs
+/// </summary>
 public class PlayerManager : MonoBehaviour
 {
-    //Define Singleton instance
+    #region Singleton
     public static PlayerManager Instance { get; private set; }
+    #endregion
 
+    #region Serialized Fields
     [Header("Player Settings")]
-    public float moveSpeed = 8f;
-
-    [Header("References")]
-    public GameManager gameManager;
-    public QTEManager qteManager;
+    [SerializeField]private float moveSpeed = 8f;
 
     [Header("QTE Settings")]
+    [SerializeField, Tooltip("Speed at which player dodges left/right")]
+    private float dodgeSpeed = 10f;
+    #endregion
+
     public string activeQTE;
-    public float dodgeSpeed = 10f;
+
+    #region Private Fields
+    private GameManager gameManager;
+    private QTEManager qteManager;
+    private PlayerCameraManager playerCameraManager;
+
     private Vector3 targetPosition;
     private float originalXPosition;
-
-    public Camera playerCamera; 
-    private float cameraTiltDuration = 1.1f;
-    private Coroutine cameraTiltCoroutine; 
+    #endregion
 
 
-    //Create Singleton Instance of the Player Manager
+    /// <summary>
+    /// Initializes the singleton instance of PlayerManager
+    /// Ensures only one instance exists in the game
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -39,43 +52,61 @@ public class PlayerManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Initializes player components and validates required dependencies
+    /// </summary>
     void Start()
     {
-        //If the Game Manager is not assigned in the inspector manually find it
-        if (gameManager == null)
-        {
-            gameManager = FindObjectOfType<GameManager>();
-        }
-        else
-        {
-            Debug.LogError("Game Manager is not assigned!");
-        }
-
-        //If the QTE Manager is not assigned in the inspector manually find it
-        if (qteManager == null)
-        {
-            qteManager = FindObjectOfType<QTEManager>();
-        }
-        else
-        {
-            Debug.LogError("QTE Manager is not assigned!");
-        }
-
         //Store the initial X position of the player
         originalXPosition = transform.position.x;
+
+        //Assign references
+        gameManager = GameManager.Instance;
+        qteManager = QTEManager.Instance;
+        playerCameraManager = PlayerCameraManager.Instance;
+
+        ValidateManagerReferences();
     }
 
 
+    /// <summary>
+    /// Validates all required manager references are properly assigned
+    /// </summary>
+    private void ValidateManagerReferences()
+    {
+        if (gameManager == null)
+        {
+            Debug.LogError("[PlayerManager] Game Manager is not assigned!");
+        }
+
+        if (qteManager == null)
+        {
+            Debug.LogError("[PlayerManager] QTE Manager is not assigned!");
+        }
+        
+        if (playerCameraManager == null)
+        {
+            Debug.LogError("[PlayerManager] Player Camera Manager is not assigned!");
+        }
+    }
+    
+
+    /// <summary>
+    /// Handles continuous forward movement of the player
+    /// </summary>
     void Update()
     {
-        //Move the player
         transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
     }
 
-
+    
+    /// <summary>
+    /// Processes collision events with game obstacles
+    /// Triggers player death state on valid collision
+    /// </summary>
+    /// <param name="collision">Collision data from the physics system</param>
     public void OnCollisionEnter(Collision collision)
     {
-        //Check if the player collides with an obstacle
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             gameManager.playerDeath();
@@ -83,7 +114,11 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    //QTE trigger detection
+    /// <summary>
+    /// Detects and processes QTE trigger zones in the game world
+    /// Initiates appropriate QTE sequences based on trigger type (Jump, Slide, Dodge)
+    /// </summary>
+    /// <param name="other">Collider that entered the trigger zone</param>
     public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Jump"))
@@ -110,35 +145,39 @@ public class PlayerManager : MonoBehaviour
             qteManager.qteStart();
         }
     }
-
-
-    //Dodging Left and Right with Smooth Movement Mechanic
+ 
+    
+    /// <summary>
+    /// Initiates a dodge movement to specified X position
+    /// </summary>
+    /// <param name="dodgeLeftRightAmount">Target X position for dodge</param>
     public void Dodge(float dodgeLeftRightAmount)
     {
-        //Set the target X position directly to dodgeLeftRightAmount
         targetPosition = transform.position;
         targetPosition.x = dodgeLeftRightAmount;
-
-        //Start moving the player toward the target position
         StartCoroutine(SmoothDodge());
     }
 
+
+    /// <summary>
+    /// Returns player to original X position after dodge
+    /// </summary>
     public void ReverseDodge()
     {
-        //Move back to the original X position
         targetPosition = transform.position;
         targetPosition.x = originalXPosition;
-
-        //Start moving the player back to the original position
         StartCoroutine(SmoothDodge());
     }
 
+
+    /// <summary>
+    /// Handles smooth interpolation for dodge movements
+    /// Maintains forward movement while adjusting X position
+    /// </summary>
     private IEnumerator SmoothDodge()
     {
-        //While the player has not yet reached the target X position
         while (transform.position.x != targetPosition.x)
         {
-            //Move the player toward the target X position smoothly without affecting the forward movement
             transform.position = new Vector3
             (
                 Mathf.MoveTowards(transform.position.x, targetPosition.x, dodgeSpeed * Time.deltaTime),
@@ -151,135 +190,19 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    //Player Jumping Mechanic
+    /// <summary>
+    /// Executes player jump with physics-based force
+    /// Coordinates camera tilt effect during jump
+    /// </summary>
     public void Jump()
     {
-        //Calculate the jump force based on the player's current velocity
         float jumpForce = Mathf.Sqrt(2f * Physics.gravity.magnitude * 6f);
-
-        //Apply the jump force to the player's rigidbody
         GetComponent<Rigidbody>().AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
 
-        //Start the camera tilt coroutine
-        if (cameraTiltCoroutine != null)
+        if (playerCameraManager.cameraTiltCoroutine != null)
         {
-            //Stop any existing tilt before starting a new one
-            StopCoroutine(cameraTiltCoroutine);
+            StopCoroutine(playerCameraManager.cameraTiltCoroutine);
         }
-        cameraTiltCoroutine = StartCoroutine(TiltCameraDown());
-    }
-
-
-    //Player Sliding Mechanic
-    public void Slide()
-    {
-        //Calculate the slide force based on the player's current velocity
-        float slideForce = Mathf.Sqrt(2f * Physics.gravity.magnitude * 6f);
-    }
-
-
-
-    //Camera Movements
-    private IEnumerator TiltCameraDown()
-    {
-        //Store the original rotation
-        Quaternion originalRotation = playerCamera.transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(90f, playerCamera.transform.eulerAngles.y, playerCamera.transform.eulerAngles.z);
-
-        //Tilt up to 90 degrees
-        float elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = targetRotation;
-
-        //Tilt back to original rotation
-        elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = originalRotation;
-    }
-
-
-    public void LookRight()
-    {
-        //Start the camera tilt coroutine
-        if (cameraTiltCoroutine != null)
-        {
-            StopCoroutine(cameraTiltCoroutine); //Stop any existing tilt before starting a new one
-        }
-        cameraTiltCoroutine = StartCoroutine(TiltCameraRight());
-    }
-
-    private IEnumerator TiltCameraRight()
-    {
-        //Store the original rotation
-        Quaternion originalRotation = playerCamera.transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x, 90f, playerCamera.transform.eulerAngles.z);
-
-        //Tilt to 90 degrees on the Y-axis
-        float elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = targetRotation; //Ensure it ends at exactly 90 degrees
-
-        //Tilt back to the original rotation
-        elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = originalRotation; //Ensure it ends at original rotation
-    }
-
-
-    public void LookLeft()
-    {
-        //Start the camera tilt coroutine
-        if (cameraTiltCoroutine != null)
-        {
-            StopCoroutine(cameraTiltCoroutine); //Stop any existing tilt before starting a new one
-        }
-        cameraTiltCoroutine = StartCoroutine(TiltCameraLeft());
-    }
-
-    private IEnumerator TiltCameraLeft()
-    {
-        //Store the original rotation
-        Quaternion originalRotation = playerCamera.transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x, -90f, playerCamera.transform.eulerAngles.z);
-
-        //Tilt to 90 degrees on the Y-axis
-        float elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = targetRotation; //Ensure it ends at exactly 90 degrees
-
-        //Tilt back to the original rotation
-        elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = originalRotation; //Ensure it ends at original rotation
+        playerCameraManager.cameraTiltCoroutine = StartCoroutine(playerCameraManager.TiltCameraDown());
     }
 }

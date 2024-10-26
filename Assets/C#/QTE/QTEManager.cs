@@ -2,16 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Manages the QTE system in the game.
+/// Dependencies: GameSceneUIManager.cs, PlayerManager.cs, PlayerCameraManager.cs
+/// </summary>
 public class QTEManager : MonoBehaviour
 {
-    //Define Singleton instance
+    #region Singleton
     public static QTEManager Instance { get; private set; }
+    #endregion
 
-    //References
+    #region Private Fields
     private GameSceneUIManager gameSceneUIManager;
     private PlayerManager playerManager;
+    private PlayerCameraManager playerCameraManager;
+    #endregion
 
 
+    /// <summary>
+    /// Initializes the QTEManager instance.
+    /// </summary>
     void Awake()
     {
         //Create Singleton Instance of the QTEManager
@@ -23,25 +34,40 @@ public class QTEManager : MonoBehaviour
         {
             Destroy(this);
         }
+    }
 
+
+    /// <summary>
+    /// Assigns the instances of the GameSceneUIManager, PlayerManager, and PlayerCameraManager.
+    /// </summary>
+    void Start()
+    {
         //Assign the instances
         gameSceneUIManager = GameSceneUIManager.gameSceneUIManagerInstance;
         playerManager = PlayerManager.Instance;
+        playerCameraManager = PlayerCameraManager.Instance;
 
         //Error Handling
         if(gameSceneUIManager == null)
         {
-            Debug.LogError("GameSceneUIManager instance is not assigned!");
+            Debug.LogError("[QTEManager] GameSceneUIManager instance is not assigned!");
         }
 
         if(playerManager == null)
         {
-            Debug.LogError("PlayerManager instance is not assigned!");
+            Debug.LogError("[QTEManager] PlayerManager instance is not assigned!");
+        }
+
+        if(playerCameraManager == null)
+        {
+            Debug.LogError("[QTEManager] PlayerCameraManager instance is not assigned!");
         }
     }
 
 
-    //QTE Start
+    /// <summary>
+    /// Starts the QTE process.
+    /// </summary>
     public void qteStart()
     {
         Time.timeScale = 0.2f;
@@ -49,7 +75,11 @@ public class QTEManager : MonoBehaviour
     }
 
 
-    //QTE Success
+    /// <summary>
+    /// Switch statement to handle the QTE success.
+    /// Takes in the active QTE as a string paraameter.
+    /// </summary>
+    /// <param name="activeQTE"></param> 
     public void qteSuccess(string activeQTE)
     {
         switch (activeQTE)
@@ -68,14 +98,14 @@ public class QTEManager : MonoBehaviour
             Time.timeScale = 1f;
             Debug.Log("DodgeRight QTE");
             playerManager.Dodge(4);
-            playerManager.LookLeft();
+            playerCameraManager.LookLeft();
             break;
 
             case "DodgeLeft":
             Time.timeScale = 1f;
             Debug.Log("DodgeLeft QTE");
             playerManager.Dodge(-4);
-            playerManager.LookRight();
+            playerCameraManager.LookRight();
             break;
 
             default:

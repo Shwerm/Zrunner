@@ -2,26 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Manages the UI elements for the main menu.
+/// Dependencies: GameManager.cs
+/// </summary>
 public class MainMenuUIManager : MonoBehaviour
 {
-    //Define Singleton instance
-    public static MainMenuUIManager mainMenuUIManagerInstance { get; private set; }
+    #region Singleton
+    public static MainMenuUIManager Instance { get; private set; }
+    #endregion
 
     //Reference to GameManager
     private GameManager gameManager;
 
-    //Reference to Main Menu UI elements
+    #region Serialized Fields
     [SerializeField]private GameObject mainMenuPanel;
     [SerializeField]private GameObject optionsPanel;
     [SerializeField]private GameObject helpPanel;
+    #endregion
 
 
-    //Create Singleton Instance of the Main Menu UIManager
+    /// <summary>
+    /// Initializes the MainMenuUIManager instance.
+    /// </summary>
     private void Awake()
     {
-        if (mainMenuUIManagerInstance == null)
+        if (Instance == null)
         {
-            mainMenuUIManagerInstance = this;
+            Instance = this;
         }
         else
         {
@@ -30,10 +39,14 @@ public class MainMenuUIManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Assigns the GameManager reference.
+    /// Set UI elements to default state.
+    /// </summary>
     void Start()
     {
         //Get reference to GameManager
-        gameManager = GameManager.gameManagerInstance;
+        gameManager = GameManager.Instance;
 
         //Enable & Disable UI elements on Start
         mainMenuPanel.SetActive(true);
@@ -42,7 +55,9 @@ public class MainMenuUIManager : MonoBehaviour
     }
 
 
-    //Button onClick Function
+    /// <summary>
+    /// Handles button clicks for the main menu.
+    /// </summary>
     public void OnButtonClicked(string buttonName)
     {
         switch (buttonName)

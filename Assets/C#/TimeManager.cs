@@ -2,23 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// TimeManager class is responsible for managing the time in the game
+/// and updating difficulty based on player's survival time.
+/// Dependencies: GameManager.cs
+/// </summary>
 public class TimeManager : MonoBehaviour
 {
-    //Define Sinngleton instance
-    public static TimeManager timeManagerInstance { get; private set; }
+    #region Singleton
+    public static TimeManager Instance { get; private set; }
+    #endregion
 
     //Reference to GameManager
     private GameManager gameManager;
 
+    //Player's survival time
     public float playerSurvivalTime = 0f;
 
 
-    //Create Singleton Instance of the TimeManager
+    /// <summary>
+    /// Initializes the TimeManager instance.
+    /// </summary>
     private void Awake()
     {
-        if (timeManagerInstance == null)
+        if (Instance == null)
         {
-            timeManagerInstance = this;
+            Instance = this;
         }
         else
         {
@@ -27,13 +37,19 @@ public class TimeManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Gets reference to GameManager.
+    /// </summary>
     void Start()
     {
         //Get reference to GameManager
-        gameManager = GameManager.gameManagerInstance;
+        gameManager = GameManager.Instance;
     }
     
 
+    /// <summary>
+    /// Updates player's survival time and game manager's score.
+    /// </summary>
     void Update()
     {
         playerSurvivalTime += Time.deltaTime;

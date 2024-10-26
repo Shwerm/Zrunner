@@ -5,28 +5,39 @@ using UnityEngine.SceneManagement;
 using System;
 using System.IO;
 
+
+/// <summary>
+/// Manages the game state and persistent player data.
+/// Dependencies: N/A
+/// </summary>
 public class GameManager : MonoBehaviour
 {
-    //Define singleton instance of the game manager
-    public static GameManager gameManagerInstance;
+    #region Singleton
+    public static GameManager Instance { get; private set; }
+    #endregion
 
+    #region Public Fields
     [Header("Player Variables")]
-    public GameObject player;
     public float playerScore;
     public float playerHighScore;
+    #endregion
 
+    #region Private Fields
     //File paths
     private string basePath;
     private string highScorePath;
     private string jsonFilePath;
+    #endregion
 
 
+    /// <summary>
+    /// Initializes the GameManager instance.
+    /// </summary>
     void Awake()
     {
-        // Create singleton instance of the game manager
-        if (gameManagerInstance == null)
+        if (Instance == null)
         {
-            gameManagerInstance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -36,6 +47,10 @@ public class GameManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Loads the high score from the JSON file.
+    /// Loads main menu scene.
+    /// </summary>
     void Start()
     {
         //Load high score when the game starts (e.g., in the main menu)
@@ -46,12 +61,21 @@ public class GameManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Public scene loader function.
+    /// </summary>
     public void sceneLoader(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
 
 
+    /// <summary>
+    /// Checks if game file exists.
+    /// Creates game file if it doesn't exist.
+    /// Creates high score JSON file if it doesn't exist.
+    /// Loads high score from the JSON file.
+    /// </summary>
     public void LoadHighScore()
     {
         //Set paths for Program Files and subdirectories
@@ -75,7 +99,7 @@ public class GameManager : MonoBehaviour
             //Set playerHighScore to 0 (initial value)
             playerHighScore = 0;
 
-            Debug.Log("Initialized HighScore file with playerHighScore = 0");
+            Debug.Log("[GameManager] Initialized HighScore file with playerHighScore = 0");
         }
         else
         {
@@ -91,16 +115,19 @@ public class GameManager : MonoBehaviour
                 //Set playerHighScore to the value saved in the JSON
                 playerHighScore = loadedData.playerHighScore;
 
-                Debug.Log("Loaded playerHighScore: " + playerHighScore);
+                Debug.Log("[GameManager] Loaded playerHighScore: " + playerHighScore);
             }
             else
             {
-                Debug.LogError("HighScore JSON file not found!");
+                Debug.LogError("[GameManager] HighScore JSON file not found!");
             }
         }
     }
 
 
+    /// <summary>
+    /// Saves the new high score to the JSON file if it's higher than the current high score.
+    /// </summary>
     public void SaveNewHighScore()
     {
         //Check if playerScore is higher than playerHighScore
@@ -118,15 +145,18 @@ public class GameManager : MonoBehaviour
             //Overwrite the existing JSON file with the new high score
             File.WriteAllText(jsonFilePath, json);
 
-            Debug.Log("New high score saved: " + playerHighScore);
+            Debug.Log("[GameManager] New high score saved: " + playerHighScore);
         }
         else
         {
-            Debug.Log("Current score (" + playerScore + ") is less than high score (" + playerHighScore + "). No update.");
+            Debug.Log("[GameManager] Current score (" + playerScore + ") is less than high score (" + playerHighScore + "). No update.");
         }
     }
 
 
+    /// <summary>
+    /// Loads the main menu scene on player death.
+    /// </summary>
     public void playerDeath()
     {
         sceneLoader("03PlayerDeathScene");
@@ -135,7 +165,9 @@ public class GameManager : MonoBehaviour
 }
 
 
-//High score data class
+/// <summary>
+/// Data structure to store the high score.
+/// </summary>
 [System.Serializable]
 public class HighScoreData
 {

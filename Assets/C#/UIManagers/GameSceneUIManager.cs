@@ -4,28 +4,40 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
+/// <summary>
+/// Manages the UI for the game scene
+/// Dependencies: PlayerManager.cs, QTEManager.cs
+/// </summary>
 public class GameSceneUIManager : MonoBehaviour
 {
-    //Define Singleton instance
+    #region Singleton
     public static GameSceneUIManager gameSceneUIManagerInstance { get; private set; }
+    #endregion
 
-    //References
+    #region Serialized Fields
+    [Header("UI Elements")]
+    [SerializeField]private GameObject qteVisual;
+    [SerializeField]private Image redCircle;
+    [SerializeField]private TMP_Text qteText;
+
+    [Header("QTE Timer Settings")]
+    [SerializeField]private float lerpDuration = 2f;
+    #endregion
+
+    #region Private Fields
     private PlayerManager playerManager;
     private QTEManager qteManager;
 
-    [Header("UI Elements")]
-    public GameObject qteVisual;
-    public Image redCircle;
-    public TMP_Text qteText;
-
-    [Header("QTE Timer Settings")]
-    public float lerpDuration = 2f;
     private Vector3 startScale = new Vector3(3f, 3f, 3f);
     private Vector3 endScale = new Vector3(1f, 1f, 1f);
     private float elapsedTime = 0f;
+    #endregion
 
 
-    //Create Singleton Instance of the Game Scene UIManager
+    /// <summary>
+    /// Initializes the GameSceneUIManager instance.
+    /// </summary>
     private void Awake()
     {
         if (gameSceneUIManagerInstance == null)
@@ -38,6 +50,10 @@ public class GameSceneUIManager : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Initializes the UI elements and references to Player Manager and QTE Manager.
+    /// </summary>
     public void Start()
     {
         //Assign references to Player Manager and QTE Manager
@@ -47,19 +63,24 @@ public class GameSceneUIManager : MonoBehaviour
         //Error Handling
         if (playerManager == null)
         {
-            Debug.LogError("Failed to initialize Player Manager");
+            Debug.LogError("[GameSceneUIManager] Failed to initialize Player Manager");
         }
 
         if(qteManager == null)
         {
-            Debug.LogError("Failed to initialize QTE Manager");
+            Debug.LogError("[GameSceneUIManager] Failed to initialize QTE Manager");
         }
 
+        //Initialize UI elements to default values
         qteVisual.SetActive(false);
     }
 
 
-    //QTE Visual Trigger
+    /// <summary>
+    /// Handles the QTE visual trigger.
+    /// Starts the QTE visual and handles the QTE input.
+    /// Generates a random key for the QTE
+    /// </summary>
     public void qteVisualTrigger()
     {
         KeyCode randomKey = GetRandomKey();
@@ -75,7 +96,12 @@ public class GameSceneUIManager : MonoBehaviour
     }
 
 
-    //Check Player Input
+    /// <summary>
+    /// Handles the QTE input.
+    /// Checks if the player presses the correct key within the time limit.
+    /// Uses the random key generated in qteVisualTrigger()
+    /// </summary>
+    /// <param name="randomKey"></param>
     private IEnumerator checkPlayerInput(KeyCode randomKey)
     {
         while (elapsedTime < lerpDuration)
@@ -100,7 +126,9 @@ public class GameSceneUIManager : MonoBehaviour
     }
 
 
-    //Shrink UI QTE timer
+    /// <summary>
+    /// Shrinks the red circle image over a set duration using lerp.
+    /// </summary>
     private IEnumerator ShrinkImage()
     {
         //Reset elapsed time
@@ -119,7 +147,9 @@ public class GameSceneUIManager : MonoBehaviour
     }
 
 
-    //Get a random key from the KeyCode enumeration
+    /// <summary>
+    /// Generates a random key for the QTE.
+    /// </summary>
     KeyCode GetRandomKey()
     {
         //Get all the values from the KeyCode enumeration

@@ -326,6 +326,7 @@ Transform:
   - {fileID: 1601043787}
   - {fileID: 1054608190}
   - {fileID: 1043132794}
+  - {fileID: 1328623791}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -13246,7 +13247,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1142832959}
-  m_VersionIndex: 25
+  m_VersionIndex: 31
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -13256,13 +13257,26 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 8723242938734213296, guid: ca86544090572564da7f727ae2abc496, type: 3}
   m_PrefabInstance: {fileID: 1139723941}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1139723945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139723942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c2652dafbf4a6d4493eecc68797c909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCamera: {fileID: 1139723944}
 --- !u!43 &1142832959
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23592
+  m_Name: pb_Mesh24854
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -13464,6 +13478,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f40950461e359454d82f219821d55e08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialCorridorCount: 4
+  maxActiveCorridors: 5
+  chunkUnloadDelay: 3
+  spawnChanceThreshold: 4
+  spawnDistance: 25
+  initialCorridorSection: {fileID: 268596794}
   corridorSections:
   - {fileID: 8526306688583685847, guid: c2400463b5880f948a71482c3ad35eb2, type: 3}
   - {fileID: 8526306688583685847, guid: a85870444bc71b54fbfe52758bec53c8, type: 3}
@@ -13479,8 +13499,37 @@ MonoBehaviour:
   - {fileID: 8526306688583685847, guid: 120ae705980396e48b71d867038b1989, type: 3}
   - {fileID: 8526306688583685847, guid: 1dfa0ecd271bd5f45935c8c3f27a5934, type: 3}
   - {fileID: 8526306688583685847, guid: 09b4a11e659a33b409c2dd6056187a71, type: 3}
-  spawnDistance: 25
-  initialCorridorSection: {fileID: 268596794}
+--- !u!1 &1328623790
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1328623791}
+  m_Layer: 0
+  m_Name: PlayerCameraManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1328623791
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1328623790}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 479076643}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1420392451
 GameObject:
   m_ObjectHideFlags: 0

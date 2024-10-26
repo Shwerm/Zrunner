@@ -2,21 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+///<summary>
+///Handles the triggering of new corridor/obstacle section spawns and player position resets
+///Attached to trigger volumes at the end of each section
+///Dependencies: PlayerManager.cs, ProGenManager.cs
+///</summary>
 public class SpawnTrigger : MonoBehaviour
 {
+    #region Private Fields
     private GameObject player;
-    //References
     private PlayerManager playerManager;
+    private ProGenManager spawner;
+    #endregion
 
-    void Awake()
+
+    ///<summary>
+    ///Initialize references and perform error checking on startup
+    ///</summary>
+    void Start()
     {
-        //Assign the instances
+        //Assign the singleton instance reference
         playerManager = PlayerManager.Instance;
+        spawner = ProGenManager.Instance;
 
+        //Locate and validate required game objects and components
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogError("Player not found!");
+            Debug.LogError("[SpawnTrigger] Player not found!");
         }
 
         if (playerManager == null)
@@ -26,13 +40,16 @@ public class SpawnTrigger : MonoBehaviour
     }
 
 
+    ///<summary>
+    ///Detects when player enters the trigger volume
+    ///Spawns next section and resets player position
+    ///</summary>
+    ///<param name="other">The collider that entered the trigger volume</param>
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            ProGenManager spawner = ProGenManager.Instance;
-
-            //Trigger the next corridor to spawn
+            //Generate next section and reset player position
             if (spawner != null)
             {
                 spawner.SpawnCorridor();
@@ -40,7 +57,7 @@ public class SpawnTrigger : MonoBehaviour
             }
             else
             {
-                Debug.LogError("ProGenManager instance is not assigned!");
+                Debug.LogError("[SpawnTrigger] ProGenManager instance is not assigned!");
             }
         }
     }
