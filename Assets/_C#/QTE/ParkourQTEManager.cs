@@ -7,10 +7,10 @@ using UnityEngine;
 /// Manages the QTE system in the game.
 /// Dependencies: GameSceneUIManager.cs, PlayerManager.cs, PlayerCameraManager.cs
 /// </summary>
-public class QTEManager : MonoBehaviour
+public class ParkourQTEManager : MonoBehaviour
 {
     #region Singleton
-    public static QTEManager Instance { get; private set; }
+    public static ParkourQTEManager Instance { get; private set; }
     #endregion
 
     #region Private Fields
@@ -43,7 +43,7 @@ public class QTEManager : MonoBehaviour
     void Start()
     {
         //Assign the instances
-        gameSceneUIManager = GameSceneUIManager.gameSceneUIManagerInstance;
+        gameSceneUIManager = GameSceneUIManager.Instance;
         playerManager = PlayerManager.Instance;
         playerCameraManager = PlayerCameraManager.Instance;
 
@@ -71,7 +71,7 @@ public class QTEManager : MonoBehaviour
     public void qteStart()
     {
         Time.timeScale = 0.2f;
-        gameSceneUIManager.qteVisualTrigger();
+        gameSceneUIManager.parkourQteVisualTrigger();
     }
 
 

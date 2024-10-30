@@ -107,9 +107,9 @@ NavMeshSettings:
     serializedVersion: 2
     agentTypeID: 0
     agentRadius: 0.5
-    agentHeight: 2
+    agentHeight: 4.25
     agentSlope: 45
-    agentClimb: 0.4
+    agentClimb: 1.94
     ledgeDropHeight: 0
     maxJumpAcrossDistance: 0
     minRegionArea: 2
@@ -613,9 +613,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8091f4697807e14eb748e5877fa4583, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  qteVisual: {fileID: 1420392451}
+  parkourQTEVisual: {fileID: 1420392451}
   redCircle: {fileID: 959626741}
-  qteText: {fileID: 1137845706}
+  parkourQteText: {fileID: 1137845706}
   lerpDuration: 1
 --- !u!1 &1054608189
 GameObject:
@@ -628,7 +628,7 @@ GameObject:
   - component: {fileID: 1054608190}
   - component: {fileID: 1054608191}
   m_Layer: 0
-  m_Name: QTEManager
+  m_Name: ParkourQTEManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -957,7 +957,8 @@ MonoBehaviour:
   initialCorridorCount: 4
   maxActiveCorridors: 5
   chunkUnloadDelay: 3
-  spawnChanceThreshold: 4
+  obstacleSpawnChanceThreshold: 4
+  enemySpawnChanceThreshold: 11
   spawnDistance: 25
   initialCorridorSection: {fileID: 268596794}
   corridorSections:
@@ -975,6 +976,9 @@ MonoBehaviour:
   - {fileID: 8526306688583685847, guid: 120ae705980396e48b71d867038b1989, type: 3}
   - {fileID: 8526306688583685847, guid: 1dfa0ecd271bd5f45935c8c3f27a5934, type: 3}
   - {fileID: 8526306688583685847, guid: 09b4a11e659a33b409c2dd6056187a71, type: 3}
+  enemySections:
+  - {fileID: 8358930302007272122, guid: 9a76638ac88e6814eb8a1b41e434bce3, type: 3}
+  - {fileID: 8358930302007272122, guid: f67ec4724253ca74794cf281ad8cc075, type: 3}
 --- !u!1 &1420392451
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,7 +989,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1420392452}
   m_Layer: 5
-  m_Name: QTEVisual
+  m_Name: ParkourQTEVisual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

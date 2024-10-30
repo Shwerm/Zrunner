@@ -18,16 +18,18 @@ public class ProGenManager : MonoBehaviour
     [Header("Generation Settings")]
     [SerializeField] private int initialCorridorCount = 4;
     [SerializeField] private int maxActiveCorridors = 5;
-    [SerializeField] private float chunkUnloadDelay = 3f;
+    [SerializeField] private float chunkUnloadDelay = 4f;
     
     [Header("Spawn Settings")]
-    [SerializeField] [Range(1, 10)] private int spawnChanceThreshold = 4;
+    [SerializeField] [Range(1, 13)] private int obstacleSpawnChanceThreshold = 4;
+    [SerializeField] [Range(1, 13)] private int enemySpawnChanceThreshold = 11;
     [SerializeField] private float spawnDistance = 5f;
     
     [Header("Prefabs")]
     [SerializeField] private GameObject initialCorridorSection;
     [SerializeField] private GameObject[] corridorSections;
     [SerializeField] private GameObject[] obstacleSections;
+    [SerializeField] private GameObject[] enemySections;
     #endregion
 
 
@@ -113,21 +115,26 @@ public class ProGenManager : MonoBehaviour
     ///</summary>
     public void SpawnCorridor()
     {
-        int randomNum = Random.Range(1, 10);
+        int randomNum = Random.Range(1, 13);
+        Debug.Log("Random number: " + randomNum);
         GameObject newSection;
 
-        //70% chance for corridor, 30% chance for obstacle
-        if (randomNum >= spawnChanceThreshold)
+        if (randomNum >= enemySpawnChanceThreshold) // 11-13: Enemy spawn (23% chance)
+        {
+            int randomIndex = Random.Range(0, enemySections.Length);
+            newSection = Instantiate(enemySections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
+        }
+        else if (randomNum >= obstacleSpawnChanceThreshold) // 4-10: Corridor spawn (54% chance)
         {
             int randomIndex = Random.Range(0, corridorSections.Length);
             newSection = Instantiate(corridorSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
         }
-        else
+        else // 1-3: Obstacle spawn (23% chance)
         {
             int randomIndex = Random.Range(0, obstacleSections.Length);
             newSection = Instantiate(obstacleSections[randomIndex], new Vector3(0, 0, nextSpawnZ), Quaternion.identity);
         }
-
+        
         if (newSection == null)
         {
             Debug.LogError("[ProGenManager] Failed to instantiate the section prefab!");

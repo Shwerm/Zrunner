@@ -27,7 +27,7 @@ public class PlayerManager : MonoBehaviour
 
     #region Private Fields
     private GameManager gameManager;
-    private QTEManager qteManager;
+    private ParkourQTEManager parkourQTEManager;
     private PlayerCameraManager playerCameraManager;
 
     private Vector3 targetPosition;
@@ -62,7 +62,7 @@ public class PlayerManager : MonoBehaviour
 
         //Assign references
         gameManager = GameManager.Instance;
-        qteManager = QTEManager.Instance;
+        parkourQTEManager = ParkourQTEManager.Instance;
         playerCameraManager = PlayerCameraManager.Instance;
 
         ValidateManagerReferences();
@@ -79,7 +79,7 @@ public class PlayerManager : MonoBehaviour
             Debug.LogError("[PlayerManager] Game Manager is not assigned!");
         }
 
-        if (qteManager == null)
+        if (parkourQTEManager == null)
         {
             Debug.LogError("[PlayerManager] QTE Manager is not assigned!");
         }
@@ -124,25 +124,25 @@ public class PlayerManager : MonoBehaviour
         if (other.CompareTag("Jump"))
         {
             activeQTE = "Jump";
-            qteManager.qteStart();
+            parkourQTEManager.qteStart();
         }
 
         if (other.CompareTag("Slide"))
         {
             activeQTE = "Slide";
-            qteManager.qteStart();
+            parkourQTEManager.qteStart();
         }
 
         if (other.CompareTag("DodgeRight"))
         {
             activeQTE = "DodgeRight";
-            qteManager.qteStart();
+            parkourQTEManager.qteStart();
         }
 
         if (other.CompareTag("DodgeLeft"))
         {
             activeQTE = "DodgeLeft";
-            qteManager.qteStart();
+            parkourQTEManager.qteStart();
         }
     }
  

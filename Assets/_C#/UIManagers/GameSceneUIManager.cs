@@ -12,14 +12,14 @@ using TMPro;
 public class GameSceneUIManager : MonoBehaviour
 {
     #region Singleton
-    public static GameSceneUIManager gameSceneUIManagerInstance { get; private set; }
+    public static GameSceneUIManager Instance { get; private set; }
     #endregion
 
     #region Serialized Fields
     [Header("UI Elements")]
-    [SerializeField]private GameObject qteVisual;
+    [SerializeField]private GameObject parkourQTEVisual;
     [SerializeField]private Image redCircle;
-    [SerializeField]private TMP_Text qteText;
+    [SerializeField]private TMP_Text parkourQteText;
 
     [Header("QTE Timer Settings")]
     [SerializeField]private float lerpDuration = 2f;
@@ -27,7 +27,7 @@ public class GameSceneUIManager : MonoBehaviour
 
     #region Private Fields
     private PlayerManager playerManager;
-    private QTEManager qteManager;
+    private ParkourQTEManager parkourQTEManager;
 
     private Vector3 startScale = new Vector3(3f, 3f, 3f);
     private Vector3 endScale = new Vector3(1f, 1f, 1f);
@@ -40,9 +40,9 @@ public class GameSceneUIManager : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        if (gameSceneUIManagerInstance == null)
+        if (Instance == null)
         {
-            gameSceneUIManagerInstance = this;
+            Instance = this;
         }
         else
         {
@@ -58,7 +58,7 @@ public class GameSceneUIManager : MonoBehaviour
     {
         //Assign references to Player Manager and QTE Manager
         playerManager = PlayerManager.Instance;
-        qteManager = QTEManager.Instance;
+        parkourQTEManager = ParkourQTEManager.Instance;
 
         //Error Handling
         if (playerManager == null)
@@ -66,13 +66,13 @@ public class GameSceneUIManager : MonoBehaviour
             Debug.LogError("[GameSceneUIManager] Failed to initialize Player Manager");
         }
 
-        if(qteManager == null)
+        if(parkourQTEManager == null)
         {
             Debug.LogError("[GameSceneUIManager] Failed to initialize QTE Manager");
         }
 
         //Initialize UI elements to default values
-        qteVisual.SetActive(false);
+        parkourQTEVisual.SetActive(false);
     }
 
 
@@ -81,12 +81,12 @@ public class GameSceneUIManager : MonoBehaviour
     /// Starts the QTE visual and handles the QTE input.
     /// Generates a random key for the QTE
     /// </summary>
-    public void qteVisualTrigger()
+    public void parkourQteVisualTrigger()
     {
         KeyCode randomKey = GetRandomKey();
-        qteText.text = randomKey.ToString();
+        parkourQteText.text = randomKey.ToString();
 
-        qteVisual.SetActive(true);
+        parkourQTEVisual.SetActive(true);
 
         //Start Lerp
         StartCoroutine(ShrinkImage());
@@ -109,8 +109,8 @@ public class GameSceneUIManager : MonoBehaviour
           if (Input.GetKeyDown(randomKey))
              {
                 Time.timeScale = 1f;
-                qteVisual.SetActive(false);
-                qteManager.qteSuccess(playerManager.activeQTE);
+                parkourQTEVisual.SetActive(false);
+                parkourQTEManager.qteSuccess(playerManager.activeQTE);
                 yield break; 
              }
           yield return null;
@@ -120,7 +120,7 @@ public class GameSceneUIManager : MonoBehaviour
         if(elapsedTime >= lerpDuration)
         {
             Time.timeScale = 1f;
-            qteVisual.SetActive(false);
+            parkourQTEVisual.SetActive(false);
             Debug.Log("QTE Failed");
         }
     }

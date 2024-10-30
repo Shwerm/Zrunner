@@ -8,10 +8,10 @@ using UnityEngine;
 /// and updating difficulty based on player's survival time.
 /// Dependencies: GameManager.cs
 /// </summary>
-public class TimeManager : MonoBehaviour
+public class PlayerTimeManager : MonoBehaviour
 {
     #region Singleton
-    public static TimeManager Instance { get; private set; }
+    public static PlayerTimeManager Instance { get; private set; }
     #endregion
 
     //Reference to GameManager
@@ -21,7 +21,9 @@ public class TimeManager : MonoBehaviour
     public float playerSurvivalTime = 0f;
 
 
-    //Create Singleton Instance of the TimeManagerference
+    /// <summary>
+    /// Initializes the TimeManager instance.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -35,6 +37,9 @@ public class TimeManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Gets reference to GameManager.
+    /// </summary>
     void Start()
     {
         //Get reference to GameManager
@@ -42,6 +47,9 @@ public class TimeManager : MonoBehaviour
     }
     
 
+    /// <summary>
+    /// Updates player's survival time and game manager's score.
+    /// </summary>
     void Update()
     {
         playerSurvivalTime += Time.deltaTime;
