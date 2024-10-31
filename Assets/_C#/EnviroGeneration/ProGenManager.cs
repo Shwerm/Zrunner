@@ -116,7 +116,6 @@ public class ProGenManager : MonoBehaviour
     public void SpawnCorridor()
     {
         int randomNum = Random.Range(1, 13);
-        Debug.Log("Random number: " + randomNum);
         GameObject newSection;
 
         if (randomNum >= enemySpawnChanceThreshold) // 11-13: Enemy spawn (23% chance)

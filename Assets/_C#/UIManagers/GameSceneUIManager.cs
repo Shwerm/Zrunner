@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 
 /// <summary>
@@ -21,8 +22,16 @@ public class GameSceneUIManager : MonoBehaviour
     [SerializeField]private Image redCircle;
     [SerializeField]private TMP_Text parkourQteText;
 
-    [Header("QTE Timer Settings")]
-    [SerializeField]private float lerpDuration = 2f;
+    [SerializeField]private GameObject combatQteTimerVisual;
+    [SerializeField]private Image combatQteTimeBar;
+    [SerializeField]private GameObject combatQteLeftGreen;
+    [SerializeField]private GameObject combatQteRightGreen;
+
+    [Header("Parkour QTE Timer Settings")]
+    [SerializeField]private float parkourLerpDuration = 2f;
+
+    [Header("Combat QTE Timer Settings")]
+    [SerializeField]private float combatQteLerpDuration = 0.5f;
     #endregion
 
     #region Private Fields
@@ -73,6 +82,9 @@ public class GameSceneUIManager : MonoBehaviour
 
         //Initialize UI elements to default values
         parkourQTEVisual.SetActive(false);
+        combatQteTimerVisual.SetActive(false);
+        combatQteLeftGreen.SetActive(false);
+        combatQteRightGreen.SetActive(false);
     }
 
 
@@ -89,35 +101,51 @@ public class GameSceneUIManager : MonoBehaviour
         parkourQTEVisual.SetActive(true);
 
         //Start Lerp
-        StartCoroutine(ShrinkImage());
+        StartCoroutine(ShrinkRedCircle());
 
         //Handlke QTE Input
-        StartCoroutine(checkPlayerInput(randomKey));
+        StartCoroutine(checkPlayerKeyBoardInput(randomKey));
+    }
+
+    public void combatQteVisualTrigger(string activeCombatQTE)
+    {
+        combatQteTimerVisual.SetActive(true);
+        if(activeCombatQTE == "Left")
+        {
+            combatQteLeftGreen.SetActive(true);
+        }
+        else if (activeCombatQTE == "Right")
+        {
+            combatQteRightGreen.SetActive(true);
+        }
+
+        //Start Lerp
+        StartCoroutine(ShrinkRedBar());
     }
 
 
     /// <summary>
-    /// Handles the QTE input.
+    /// Handles the Parkour QTE input.
     /// Checks if the player presses the correct key within the time limit.
     /// Uses the random key generated in qteVisualTrigger()
     /// </summary>
     /// <param name="randomKey"></param>
-    private IEnumerator checkPlayerInput(KeyCode randomKey)
+    private IEnumerator checkPlayerKeyBoardInput(KeyCode randomKey)
     {
-        while (elapsedTime < lerpDuration)
+        while (elapsedTime < parkourLerpDuration)
         {
           if (Input.GetKeyDown(randomKey))
              {
                 Time.timeScale = 1f;
                 parkourQTEVisual.SetActive(false);
-                parkourQTEManager.qteSuccess(playerManager.activeQTE);
+                parkourQTEManager.parkourQteSuccess(playerManager.activeParkourQTE);
                 yield break; 
              }
           yield return null;
         }
 
         //If the player doesn't press the key within the time limit, handle the failure
-        if(elapsedTime >= lerpDuration)
+        if(elapsedTime >= parkourLerpDuration)
         {
             Time.timeScale = 1f;
             parkourQTEVisual.SetActive(false);
@@ -126,18 +154,35 @@ public class GameSceneUIManager : MonoBehaviour
     }
 
 
+    public void LeftSquareClick()
+    {
+        Debug.Log("Lefty Clicked");
+        Time.timeScale = 1f;
+        combatQteTimerVisual.SetActive(false);
+        combatQteLeftGreen.SetActive(false);
+    }
+
+    public void RightSquareClick()
+    {
+        Debug.Log("Righty Clicked");
+        Time.timeScale = 1f;
+        combatQteTimerVisual.SetActive(false);
+        combatQteRightGreen.SetActive(false);
+    }
+
+
     /// <summary>
     /// Shrinks the red circle image over a set duration using lerp.
     /// </summary>
-    private IEnumerator ShrinkImage()
+    private IEnumerator ShrinkRedCircle()
     {
         //Reset elapsed time
         elapsedTime = 0f;
 
-        while (elapsedTime < lerpDuration)
+        while (elapsedTime < parkourLerpDuration)
         {
             elapsedTime += Time.deltaTime;
-            float progress = Mathf.Clamp01(elapsedTime / lerpDuration);
+            float progress = Mathf.Clamp01(elapsedTime / parkourLerpDuration);
 
             //Lerp between startScale and endScale based on the progress
             redCircle.transform.localScale = Vector3.Lerp(startScale, endScale, progress);
@@ -147,6 +192,30 @@ public class GameSceneUIManager : MonoBehaviour
     }
 
 
+    private IEnumerator ShrinkRedBar()
+    {
+        elapsedTime = 0f;
+        float unscaledLerpDuration = combatQteLerpDuration * 0.5f;
+
+        while (elapsedTime < unscaledLerpDuration)
+        {
+            elapsedTime += Time.unscaledDeltaTime;
+            float progress = Mathf.Clamp01(elapsedTime / unscaledLerpDuration);
+            combatQteTimeBar.fillAmount = Mathf.Lerp(1f, 0f, progress);
+            
+            if (progress >= 1f)
+            {
+                combatQteTimerVisual.SetActive(false);
+                combatQteLeftGreen.SetActive(false);
+                combatQteRightGreen.SetActive(false);
+                Debug.Log("Combat QTE Failed");
+            }
+            
+            yield return null;
+        }
+    }
+
+    
     /// <summary>
     /// Generates a random key for the QTE.
     /// </summary>

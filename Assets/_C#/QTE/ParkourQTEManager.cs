@@ -68,7 +68,7 @@ public class ParkourQTEManager : MonoBehaviour
     /// <summary>
     /// Starts the QTE process.
     /// </summary>
-    public void qteStart()
+    public void parkourQteStart()
     {
         Time.timeScale = 0.2f;
         gameSceneUIManager.parkourQteVisualTrigger();
@@ -80,7 +80,7 @@ public class ParkourQTEManager : MonoBehaviour
     /// Takes in the active QTE as a string paraameter.
     /// </summary>
     /// <param name="activeQTE"></param> 
-    public void qteSuccess(string activeQTE)
+    public void parkourQteSuccess(string activeQTE)
     {
         switch (activeQTE)
         {

@@ -155,6 +155,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b84e0abf166d71244a8d64815871f9e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &8122339692065906898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7633671176217810271}
+  - component: {fileID: 6076673587008988742}
+  m_Layer: 0
+  m_Name: CombatQTEHitBox
+  m_TagString: Right
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7633671176217810271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122339692065906898}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -5.26}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7525778975688302845}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6076673587008988742
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122339692065906898}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 11.196335, y: 9.005998, z: 0.2049965}
+  m_Center: {x: -0.063194275, y: 4.0030007, z: 0.39750177}
 --- !u!1 &8358930302007272122
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,6 +233,7 @@ Transform:
   m_Children:
   - {fileID: 7391046206634437493}
   - {fileID: 6632241935677214794}
+  - {fileID: 7633671176217810271}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

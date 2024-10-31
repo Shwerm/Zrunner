@@ -23,12 +23,14 @@ public class PlayerManager : MonoBehaviour
     private float dodgeSpeed = 10f;
     #endregion
 
-    public string activeQTE;
+    public string activeParkourQTE;
+    public string activeCombatQTE;
 
     #region Private Fields
     private GameManager gameManager;
     private ParkourQTEManager parkourQTEManager;
     private PlayerCameraManager playerCameraManager;
+    private GameSceneUIManager gameSceneUIManager;
 
     private Vector3 targetPosition;
     private float originalXPosition;
@@ -64,6 +66,7 @@ public class PlayerManager : MonoBehaviour
         gameManager = GameManager.Instance;
         parkourQTEManager = ParkourQTEManager.Instance;
         playerCameraManager = PlayerCameraManager.Instance;
+        gameSceneUIManager = GameSceneUIManager.Instance;
 
         ValidateManagerReferences();
     }
@@ -87,6 +90,11 @@ public class PlayerManager : MonoBehaviour
         if (playerCameraManager == null)
         {
             Debug.LogError("[PlayerManager] Player Camera Manager is not assigned!");
+        }
+
+        if (gameSceneUIManager == null)
+        {
+            Debug.LogError("[PlayerManager] Game Scene UI Manager is not assigned!");
         }
     }
     
@@ -123,26 +131,41 @@ public class PlayerManager : MonoBehaviour
     {
         if (other.CompareTag("Jump"))
         {
-            activeQTE = "Jump";
-            parkourQTEManager.qteStart();
+            activeParkourQTE = "Jump";
+            parkourQTEManager.parkourQteStart();
         }
 
         if (other.CompareTag("Slide"))
         {
-            activeQTE = "Slide";
-            parkourQTEManager.qteStart();
+            activeParkourQTE = "Slide";
+            parkourQTEManager.parkourQteStart();
         }
 
         if (other.CompareTag("DodgeRight"))
         {
-            activeQTE = "DodgeRight";
-            parkourQTEManager.qteStart();
+            activeParkourQTE = "DodgeRight";
+            parkourQTEManager.parkourQteStart();
         }
 
         if (other.CompareTag("DodgeLeft"))
         {
-            activeQTE = "DodgeLeft";
-            parkourQTEManager.qteStart();
+            activeParkourQTE = "DodgeLeft";
+            parkourQTEManager.parkourQteStart();
+        }
+
+
+        if (other.CompareTag("Left"))
+        {
+            activeCombatQTE = "Left";
+            Time.timeScale = 0.5f;
+            gameSceneUIManager.combatQteVisualTrigger(activeCombatQTE);
+        }
+
+        if (other.CompareTag("Right"))
+        {
+            activeCombatQTE = "Right";
+            Time.timeScale = 0.5f;
+            gameSceneUIManager.combatQteVisualTrigger(activeCombatQTE);
         }
     }
  
