@@ -25,8 +25,6 @@ public class CombatQTEManager : MonoBehaviour
 
     private PlayerCameraManager playerCameraManager;
 
-    private IInputService inputService;
-
     void Awake()
     {
         if (Instance == null)
@@ -37,11 +35,6 @@ public class CombatQTEManager : MonoBehaviour
         {
             Destroy(this);
         }
-    }
-
-    public void Initialize(IInputService input)
-    {
-        inputService = input;
     }
 
     void Start()
@@ -59,8 +52,6 @@ public class CombatQTEManager : MonoBehaviour
         {
             Debug.LogError("PlayerCameraManager is null");
         }
-
-        PlayerManager.Instance.OnPlayerStateChanged += HandlePlayerStateChange;
     }
 
     public void RushEnemyToPlayer(string activeCombatQte)

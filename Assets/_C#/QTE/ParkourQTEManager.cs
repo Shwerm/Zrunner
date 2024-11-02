@@ -17,7 +17,6 @@ public class ParkourQTEManager : MonoBehaviour
     private GameSceneUIManager gameSceneUIManager;
     private PlayerManager playerManager;
     private PlayerCameraManager playerCameraManager;
-    private IInputService inputService;
     #endregion
 
     public KeyCode randomKey;
@@ -67,18 +66,6 @@ public class ParkourQTEManager : MonoBehaviour
         }
     }
 
-    public void Initialize(IInputService input)
-    {
-        inputService = input;
-    }
-
-    void Update()
-    {
-        if (inputService.IsQTEKeyPressed(randomKey))
-        {
-            parkourQteSuccess(playerManager.activeParkourQTE);
-        }
-    }
 
     /// <summary>
     /// Starts the QTE process.

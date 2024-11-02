@@ -27,7 +27,6 @@ public class GameManager : MonoBehaviour
     private string basePath;
     private string highScorePath;
     private string jsonFilePath;
-    private PlayerInputService inputService;
     #endregion
 
 
@@ -59,30 +58,8 @@ public class GameManager : MonoBehaviour
 
         //Load main menu scene
         sceneLoader("01MainMenu");
-
-        // Only initialize player systems in game scene
-        if (SceneManager.GetActiveScene().name == "02GameScene")
-        {
-            InitializeGameSceneComponents();
-        }
     }
 
-
-    private void InitializeGameSceneComponents()
-    {
-        inputService = gameObject.AddComponent<PlayerInputService>();
-        
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.Initialize(
-                this,
-                ParkourQTEManager.Instance,
-                PlayerCameraManager.Instance,
-                GameSceneUIManager.Instance,
-                inputService
-            );
-        }
-    }
 
     /// <summary>
     /// Public scene loader function.
@@ -185,8 +162,6 @@ public class GameManager : MonoBehaviour
         sceneLoader("03PlayerDeathScene");
         SaveNewHighScore();
     }
-
-
 }
 
 
