@@ -1,31 +1,51 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 /// <summary>
 /// Manages the player camera, including tilt and movement during QTEs.
-/// Dependencies: N/A
+/// Implements smooth camera transitions and state management.
+/// Dependencies: CameraConfig
 /// </summary>
-public class PlayerCameraManager : MonoBehaviour
+public class PlayerCameraManager : MonoBehaviour, ICameraController
 {
     #region Singleton
     public static PlayerCameraManager Instance { get; private set; }
     #endregion
 
-    #region Camera Settings
-    [SerializeField]private Camera playerCamera;
-    [SerializeField]private float cameraTiltDuration = 1.1f;
+    #region Events
+    public event Action<CameraState> OnCameraStateChanged;
+    public event Action<float> OnTiltProgress;
+    #endregion
+
+    #region Serialized Fields
+    [Header("Configuration")]
+    [SerializeField] private CameraConfig cameraConfig;
+    [SerializeField] private Camera playerCamera;
+    #endregion
+
+    #region Public Fields
     public Coroutine cameraTiltCoroutine;
     #endregion
 
+    #region Private Fields
+    private CameraState currentState = CameraState.Normal;
+    #endregion
 
+    #region Lifecycle Methods
     /// <summary>
-    /// Initializes the singleton instance on Awake
+    /// Initializes the singleton instance and validates components
     /// </summary>
     void Awake()
     {
-        //Create Singleton Instance of the PlayerCamera
+        InitializeSingleton();
+        ValidateComponents();
+    }
+    #endregion
+
+    #region Initialization
+    private void InitializeSingleton()
+    {
         if (Instance == null)
         {
             Instance = this;
@@ -36,131 +56,133 @@ public class PlayerCameraManager : MonoBehaviour
         }
     }
 
+    private void ValidateComponents()
+    {
+        if (playerCamera == null)
+        {
+            playerCamera = GetComponentInChildren<Camera>();
+            if (playerCamera == null)
+            {
+                Debug.LogError("[PlayerCameraManager] No camera assigned or found in children");
+            }
+        }
 
+        if (cameraConfig == null)
+        {
+            Debug.LogError("[PlayerCameraManager] Camera config not assigned");
+        }
+    }
+    #endregion
+
+    #region Public Methods
     /// <summary>
-    /// Function for tilting the camera down during Jump QTEs
-    /// - Tilt the camera down to 90 degrees
-    /// - Wait for the QTE to complete
-    /// - Reset the camera rotation
+    /// Initiates a downward camera tilt for jump sequences
     /// </summary>
     public IEnumerator TiltCameraDown()
     {
-        //Store the original rotation
-        Quaternion originalRotation = playerCamera.transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(90f, playerCamera.transform.eulerAngles.y, playerCamera.transform.eulerAngles.z);
-
-        //Tilt up to 90 degrees
-        float elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = targetRotation;
-
-        yield return new WaitForSeconds(0.6f);
-
-        //Tilt back to original rotation
-        elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = originalRotation;
+        UpdateCameraState(CameraState.Tilting);
+        Vector3 targetAngles = new Vector3(90f, playerCamera.transform.eulerAngles.y, playerCamera.transform.eulerAngles.z);
+        yield return TiltCamera(targetAngles, cameraConfig.holdDuration);
+        UpdateCameraState(CameraState.Normal);
     }
 
-
     /// <summary>
-    ///Function for tilting the camera right during Look Right QTEs
-    ///- Tilt the camera to 90 degrees on the Y-axis
-    ///- Wait for the QTE to complete
-    ///- Reset the camera rotation
+    /// Initiates a right-facing camera tilt
     /// </summary>
     public void LookRight()
     {
-        //Start the camera tilt coroutine
-        if (cameraTiltCoroutine != null)
-        {
-            StopCoroutine(cameraTiltCoroutine); //Stop any existing tilt before starting a new one
-        }
-        cameraTiltCoroutine = StartCoroutine(TiltCameraRight());
+        SafeStopCoroutine();
+        Vector3 targetAngles = new Vector3(
+            playerCamera.transform.eulerAngles.x,
+            90f,
+            playerCamera.transform.eulerAngles.z
+        );
+        cameraTiltCoroutine = StartCoroutine(TiltCamera(targetAngles, cameraConfig.holdDuration));
     }
-
-    private IEnumerator TiltCameraRight()
-    {
-        //Store the original rotation
-        Quaternion originalRotation = playerCamera.transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x, 90f, playerCamera.transform.eulerAngles.z);
-
-        //Tilt to 90 degrees on the Y-axis
-        float elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = targetRotation; //Ensure it ends at exactly 90 degrees
-
-        yield return new WaitForSeconds(1.5f);
-
-        //Tilt back to the original rotation
-        elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = originalRotation; //Ensure it ends at original rotation
-    }
-
 
     /// <summary>
-    ///Function for tilting the camera left during Look Left QTEs
-    ///- Tilt the camera to -90 degrees on the Y-axis
-    ///- Wait for the QTE to complete
-    ///- Reset the camera rotation
+    /// Initiates a left-facing camera tilt
     /// </summary>
     public void LookLeft()
     {
-        //Start the camera tilt coroutine
-        if (cameraTiltCoroutine != null)
-        {
-            StopCoroutine(cameraTiltCoroutine); //Stop any existing tilt before starting a new one
-        }
-        cameraTiltCoroutine = StartCoroutine(TiltCameraLeft());
+        SafeStopCoroutine();
+        Vector3 targetAngles = new Vector3(
+            playerCamera.transform.eulerAngles.x,
+            -90f,
+            playerCamera.transform.eulerAngles.z
+        );
+        cameraTiltCoroutine = StartCoroutine(TiltCamera(targetAngles, cameraConfig.holdDuration));
     }
+    #endregion
 
-    private IEnumerator TiltCameraLeft()
+    #region Private Methods
+    private IEnumerator TiltCamera(Vector3 targetEulerAngles, float holdDuration)
     {
-        //Store the original rotation
+        UpdateCameraState(CameraState.Tilting);
         Quaternion originalRotation = playerCamera.transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x, -90f, playerCamera.transform.eulerAngles.z);
+        Quaternion targetRotation = Quaternion.Euler(targetEulerAngles);
 
-        //Tilt to 90 degrees on the Y-axis
-        float elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = targetRotation; //Ensure it ends at exactly 90 degrees
-
-        yield return new WaitForSeconds(1.5f);
-
-        //Tilt back to the original rotation
-        elapsedTime = 0f;
-        while (elapsedTime < cameraTiltDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            playerCamera.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, elapsedTime / cameraTiltDuration);
-            yield return null;
-        }
-        playerCamera.transform.rotation = originalRotation; //Ensure it ends at original rotation
+        yield return PerformTilt(originalRotation, targetRotation);
+        
+        UpdateCameraState(CameraState.Held);
+        yield return new WaitForSeconds(holdDuration);
+        
+        yield return PerformTilt(targetRotation, originalRotation);
+        UpdateCameraState(CameraState.Normal);
     }
+
+    private IEnumerator PerformTilt(Quaternion from, Quaternion to)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < cameraConfig.tiltDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float progress = elapsedTime / cameraConfig.tiltDuration;
+            
+            playerCamera.transform.rotation = Quaternion.Slerp(from, to, progress);
+            OnTiltProgress?.Invoke(progress);
+            
+            yield return null;
+        }
+        playerCamera.transform.rotation = to;
+    }
+
+    private void SafeStopCoroutine()
+    {
+        try
+        {
+            if (cameraTiltCoroutine != null)
+            {
+                StopCoroutine(cameraTiltCoroutine);
+                cameraTiltCoroutine = null;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[PlayerCameraManager] Failed to stop camera coroutine: {e.Message}");
+        }
+    }
+
+    private void UpdateCameraState(CameraState newState)
+    {
+        currentState = newState;
+        OnCameraStateChanged?.Invoke(currentState);
+    }
+    #endregion
 }
+
+#region Supporting Types
+public enum CameraState
+{
+    Normal,
+    Tilting,
+    Held
+}
+
+public interface ICameraController
+{
+    void LookRight();
+    void LookLeft();
+    IEnumerator TiltCameraDown();
+}
+#endregion
