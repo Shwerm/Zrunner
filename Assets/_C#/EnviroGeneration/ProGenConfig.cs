@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ProGenConfig", menuName = "Runner/ProGen Config")]
+[CreateAssetMenu(fileName = "ProGenConfig", menuName = "Procedural Generation/ProGen Config")]
 public class ProGenConfig : ScriptableObject
 {
     [Header("Generation Settings")]
