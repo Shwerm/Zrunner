@@ -218,7 +218,6 @@ public class GameSceneUIManager : MonoBehaviour
                 combatQteRightGreen.SetActive(false);
                 Debug.Log("Combat QTE Failed");
                 combatQTEManager.RushEnemyToPlayer(playerManager.activeCombatQTE);
-                
             }
           
             yield return null;
@@ -232,6 +231,7 @@ public class GameSceneUIManager : MonoBehaviour
         Time.timeScale = 1f;
         combatQteTimerVisual.SetActive(false);
         combatQteLeftGreen.SetActive(false);
+        StartCoroutine(combatQTEManager.ShootEnemy(playerManager.activeCombatQTE));
     }
 
     public void RightSquareClick()
@@ -240,6 +240,7 @@ public class GameSceneUIManager : MonoBehaviour
         Time.timeScale = 1f;
         combatQteTimerVisual.SetActive(false);
         combatQteRightGreen.SetActive(false);
+        StartCoroutine(combatQTEManager.ShootEnemy(playerManager.activeCombatQTE));
     }
     #endregion
 }

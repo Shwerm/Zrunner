@@ -16,6 +16,11 @@ public class CombatQTEManager : MonoBehaviour
     [SerializeField]private GameObject leftEnemy;
     [SerializeField]private GameObject rightEnemy;
 
+    [SerializeField]private GameObject rightKillableEnemy;
+    [SerializeField]private GameObject leftKillableEnemy;
+    [SerializeField]private GameObject bullet;
+    [SerializeField]private GameObject bulletSpawnPoint;
+
     [SerializeField]private float rushSpeed = 100f;
 
     private PlayerCameraManager playerCameraManager;
@@ -38,6 +43,10 @@ public class CombatQTEManager : MonoBehaviour
         leftEnemy.SetActive(false);
         rightEnemy.SetActive(false);
 
+        //Disable killable enemies at start of game
+        leftKillableEnemy.SetActive(false);
+        rightKillableEnemy.SetActive(false);
+
         playerCameraManager = PlayerCameraManager.Instance;
         if(playerCameraManager == null)
         {
@@ -50,14 +59,32 @@ public class CombatQTEManager : MonoBehaviour
         if(activeCombatQte == "Left")
         {
             leftEnemy.SetActive(true);
-
             playerCameraManager.LookLeft();
         }
         else if(activeCombatQte == "Right")
         {
             rightEnemy.SetActive(true);
-
             playerCameraManager.LookRight();
+        }
+    }
+
+    public IEnumerator ShootEnemy(string activeCombatQte)
+    {
+        if(activeCombatQte == "Left")
+        {
+            leftKillableEnemy.SetActive(true);
+            playerCameraManager.LookLeft();
+            //Instantiate bullet
+            yield return new WaitForSeconds(0.5f);
+            SpawnBulletLeft();
+        }
+        else if(activeCombatQte == "Right")
+        {
+            rightKillableEnemy.SetActive(true);
+            playerCameraManager.LookRight();
+            //Instantiate bullet
+            yield return new WaitForSeconds(0.5f);
+            SpawnBulletRight();
         }
     }
     
@@ -74,5 +101,39 @@ public class CombatQTEManager : MonoBehaviour
             rightEnemy.transform.position = Vector3.MoveTowards(rightEnemy.transform.position, PlayerManager.Instance.transform.position, rushSpeed * Time.deltaTime * 9f);
         }
     }
-    
+
+    private void SpawnBulletLeft()
+    {
+        Quaternion rotation = Quaternion.Euler(90f, 0f, 90f);
+        Instantiate(bullet, bulletSpawnPoint.transform.position, rotation);
+    }
+
+    private void SpawnBulletRight()
+    {
+        Quaternion rotation = Quaternion.Euler(90f, 0f, -90f);
+        Instantiate(bullet, bulletSpawnPoint.transform.position, rotation);
+    }
+
+    void OnEnable()
+    {
+        KillableEnemyToggle.onBulletHit += HandleEnemyHit;
+    }
+
+    void OnDisable()
+    {
+        KillableEnemyToggle.onBulletHit -= HandleEnemyHit;
+    }
+
+    private void HandleEnemyHit()
+    {
+        if (leftKillableEnemy.GetComponent<MeshRenderer>().enabled == false)
+        {
+            leftKillableEnemy.SetActive(false);
+        }
+        
+        if (rightKillableEnemy.GetComponent<MeshRenderer>().enabled == false)
+        {
+            rightKillableEnemy.SetActive(false);
+        }
+    }
 }

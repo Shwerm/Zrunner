@@ -4,7 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - PlayerSpawnLoc
   - Obstacle
   - DodgeLeft
   - DodgeRight
@@ -12,6 +11,7 @@ TagManager:
   - Slide
   - Left
   - Right
+  - Bullet
   layers:
   - Default
   - TransparentFX
