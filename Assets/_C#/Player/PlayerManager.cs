@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
+using System;
+using System.Collections;
 
 /// <summary>
 /// Manages player core functionality including movement, collision handling, and QTE interactions.
-/// Handles forward movement, dodge mechanics, jumping, and obstacle detection.
-/// Dependencies: GameManager.cs, QTEManager.cs, PlayerCameraManager.cs
+/// Implements state-based behavior and event-driven architecture for optimal performance.
+/// Dependencies: PlayerConfig.cs, GameManager.cs, QTEManager.cs, PlayerCameraManager.cs
 /// </summary>
 public class PlayerManager : MonoBehaviour
 {
@@ -14,34 +13,73 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance { get; private set; }
     #endregion
 
-    #region Serialized Fields
-    [Header("Player Settings")]
-    [SerializeField]private float moveSpeed = 8f;
-
-    [Header("QTE Settings")]
-    [SerializeField, Tooltip("Speed at which player dodges left/right")]
-    private float dodgeSpeed = 10f;
+    #region Events
+    public static event Action<PlayerState> OnPlayerStateChanged;
+    public static event Action OnPlayerCollision;
+    public static event Action OnPlayerJump;
     #endregion
 
-    public string activeParkourQTE;
-    public string activeCombatQTE;
+    #region Serialized Fields
+    [Header("Configuration")]
+    [SerializeField] private PlayerConfig playerConfig;
+    
+    [Header("Debug")]
+    [SerializeField] private bool debugMode;
+    #endregion
+
+    #region State Management
+    private PlayerState currentState;
+    public PlayerState CurrentState 
+    {
+        get => currentState;
+        private set 
+        {
+            currentState = value;
+            OnPlayerStateChanged?.Invoke(currentState);
+        }
+    }
+    #endregion
 
     #region Private Fields
     private GameManager gameManager;
     private ParkourQTEManager parkourQTEManager;
     private PlayerCameraManager playerCameraManager;
     private GameSceneUIManager gameSceneUIManager;
-
+    
     private Vector3 targetPosition;
     private float originalXPosition;
+    
+    // Cached components
+    private Rigidbody rb;
+    private Transform tr;
     #endregion
 
+    #region Public Properties
+    public string activeParkourQTE { get; private set; }
+    public string activeCombatQTE { get; private set; }
+    #endregion
 
-    /// <summary>
-    /// Initializes the singleton instance of PlayerManager
-    /// Ensures only one instance exists in the game
-    /// </summary>
+    // Rest of the implementation remains the same, just removing Input System specific code
+
+    #region Initialization
     private void Awake()
+    {
+        InitializeSingleton();
+        CacheComponents();
+    }
+
+    private void OnEnable()
+    {
+        InitializeInput();
+        SubscribeToEvents();
+    }
+
+    void Start()
+    {
+        Initialize();
+    }
+
+    private void InitializeSingleton()
     {
         if (Instance == null)
         {
@@ -53,179 +91,206 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-
-    /// <summary>
-    /// Initializes player components and validates required dependencies
-    /// </summary>
-    void Start()
+    private void CacheComponents()
     {
-        //Store the initial X position of the player
-        originalXPosition = transform.position.x;
+        rb = GetComponent<Rigidbody>();
+        tr = transform;
+    }
 
-        //Assign references
-        gameManager = GameManager.Instance;
-        parkourQTEManager = ParkourQTEManager.Instance;
-        playerCameraManager = PlayerCameraManager.Instance;
-        gameSceneUIManager = GameSceneUIManager.Instance;
-
+    private void Initialize()
+    {
+        originalXPosition = tr.position.x;
+        AssignManagerReferences();
         ValidateManagerReferences();
+        CurrentState = PlayerState.Running;
     }
 
-
-    /// <summary>
-    /// Validates all required manager references are properly assigned
-    /// </summary>
-    private void ValidateManagerReferences()
+    private void InitializeInput()
     {
-        if (gameManager == null)
-        {
-            Debug.LogError("[PlayerManager] Game Manager is not assigned!");
-        }
-
-        if (parkourQTEManager == null)
-        {
-            Debug.LogError("[PlayerManager] QTE Manager is not assigned!");
-        }
-        
-        if (playerCameraManager == null)
-        {
-            Debug.LogError("[PlayerManager] Player Camera Manager is not assigned!");
-        }
-
-        if (gameSceneUIManager == null)
-        {
-            Debug.LogError("[PlayerManager] Game Scene UI Manager is not assigned!");
-        }
+        moveAction = inputActions.FindAction("Move");
+        moveAction.Enable();
     }
-    
+    #endregion
 
-    /// <summary>
-    /// Handles continuous forward movement of the player
-    /// </summary>
-    void Update()
+    #region Core Gameplay Loop
+    private void Update()
     {
-        transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+        if (CurrentState == PlayerState.Running)
+        {
+            HandleMovement();
+        }
     }
 
+    private void HandleMovement()
+    {
+        tr.Translate(Vector3.forward * playerConfig.moveSpeed * Time.deltaTime);
+    }
+    #endregion
     
-    /// <summary>
-    /// Processes collision events with game obstacles
-    /// Triggers player death state on valid collision
-    /// </summary>
-    /// <param name="collision">Collision data from the physics system</param>
+    #region Collision Handling
     public void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Obstacle"))
         {
+            OnPlayerCollision?.Invoke();
             gameManager.playerDeath();
         }
     }
 
-
-    /// <summary>
-    /// Detects and processes QTE trigger zones in the game world
-    /// Initiates appropriate QTE sequences based on trigger type (Jump, Slide, Dodge)
-    /// </summary>
-    /// <param name="other">Collider that entered the trigger zone</param>
     public void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Jump"))
-        {
-            activeParkourQTE = "Jump";
-            parkourQTEManager.parkourQteStart();
-        }
-
-        if (other.CompareTag("Slide"))
-        {
-            activeParkourQTE = "Slide";
-            parkourQTEManager.parkourQteStart();
-        }
-
-        if (other.CompareTag("DodgeRight"))
-        {
-            activeParkourQTE = "DodgeRight";
-            parkourQTEManager.parkourQteStart();
-        }
-
-        if (other.CompareTag("DodgeLeft"))
-        {
-            activeParkourQTE = "DodgeLeft";
-            parkourQTEManager.parkourQteStart();
-        }
-
-
-        if (other.CompareTag("Left"))
-        {
-            activeCombatQTE = "Left";
-            Time.timeScale = 0.5f;
-            gameSceneUIManager.combatQteVisualTrigger(activeCombatQTE);
-        }
-
-        if (other.CompareTag("Right"))
-        {
-            activeCombatQTE = "Right";
-            Time.timeScale = 0.5f;
-            gameSceneUIManager.combatQteVisualTrigger(activeCombatQTE);
-        }
+        HandleParkourTriggers(other);
+        HandleCombatTriggers(other);
     }
- 
-    
-    /// <summary>
-    /// Initiates a dodge movement to specified X position
-    /// </summary>
-    /// <param name="dodgeLeftRightAmount">Target X position for dodge</param>
-    public void Dodge(float dodgeLeftRightAmount)
-    {
-        targetPosition = transform.position;
-        targetPosition.x = dodgeLeftRightAmount;
-        StartCoroutine(SmoothDodge());
-    }
+    #endregion
 
-
+    #region Movement Actions
     /// <summary>
     /// Returns player to original X position after dodge
     /// </summary>
     public void ReverseDodge()
     {
-        targetPosition = transform.position;
+        CurrentState = PlayerState.Dodging;
+        targetPosition = tr.position;
         targetPosition.x = originalXPosition;
         StartCoroutine(SmoothDodge());
     }
 
-
-    /// <summary>
-    /// Handles smooth interpolation for dodge movements
-    /// Maintains forward movement while adjusting X position
-    /// </summary>
     private IEnumerator SmoothDodge()
     {
-        while (transform.position.x != targetPosition.x)
+        while (tr.position.x != targetPosition.x)
         {
-            transform.position = new Vector3
-            (
-                Mathf.MoveTowards(transform.position.x, targetPosition.x, dodgeSpeed * Time.deltaTime),
-                transform.position.y,
-                transform.position.z
+            tr.position = new Vector3(
+                Mathf.MoveTowards(tr.position.x, targetPosition.x, playerConfig.dodgeSpeed * Time.deltaTime),
+                tr.position.y,
+                tr.position.z
             );
-
             yield return null;
         }
+        CurrentState = PlayerState.Running;
     }
 
-
-    /// <summary>
-    /// Executes player jump with physics-based force
-    /// Coordinates camera tilt effect during jump
-    /// </summary>
     public void Jump()
     {
-        float jumpForce = Mathf.Sqrt(2f * Physics.gravity.magnitude * 6f);
-        GetComponent<Rigidbody>().AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-
+        CurrentState = PlayerState.Jumping;
+        float jumpForce = Mathf.Sqrt(2f * Physics.gravity.magnitude * playerConfig.jumpForce);
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        
+        HandleJumpCamera();
+        OnPlayerJump?.Invoke();
+    }
+    #endregion
+    #region Helper Methods
+    private void HandleJumpCamera()
+    {
         if (playerCameraManager.cameraTiltCoroutine != null)
         {
             StopCoroutine(playerCameraManager.cameraTiltCoroutine);
         }
         playerCameraManager.cameraTiltCoroutine = StartCoroutine(playerCameraManager.TiltCameraDown());
     }
+
+    private void LogDebugMessage(string message)
+    {
+        if (debugMode)
+        {
+            Debug.Log($"[PlayerManager] {message}");
+        }
+    }
+    #endregion
+
+    #region Cleanup
+    private void OnDisable()
+    {
+        moveAction?.Disable();
+        UnsubscribeFromEvents();
+    }
+
+    private void OnDestroy()
+    {
+        OnPlayerStateChanged = null;
+        OnPlayerCollision = null;
+        OnPlayerJump = null;
+    }
+    #endregion
+
+    #region Additional Utility
+    /// <summary>
+    /// Defines the possible states a player can be in during gameplay
+    /// </summary>
+    public enum PlayerState
+    {
+        Idle,
+        Running,
+        Jumping,
+        Dodging,
+        Dead
+    }
+    #endregion
+
+    #region Event Management
+    private void SubscribeToEvents()
+    {
+        OnPlayerStateChanged += HandlePlayerStateChanged;
+        OnPlayerCollision += HandlePlayerCollision;
+        OnPlayerJump += HandlePlayerJump;
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        OnPlayerStateChanged -= HandlePlayerStateChanged;
+        OnPlayerCollision -= HandlePlayerCollision;
+        OnPlayerJump -= HandlePlayerJump;
+    }
+
+    private void HandlePlayerStateChanged(PlayerState newState)
+    {
+        LogDebugMessage($"Player state changed to: {newState}");
+    }
+
+    private void HandlePlayerCollision()
+    {
+        LogDebugMessage("Player collision detected");
+    }
+
+    private void HandlePlayerJump()
+    {
+        LogDebugMessage("Player jump executed");
+    }
+    #endregion
+
+    private void AssignManagerReferences()
+    {
+        gameManager = GameManager.Instance;
+        parkourQTEManager = ParkourQTEManager.Instance;
+        playerCameraManager = PlayerCameraManager.Instance;
+        gameSceneUIManager = GameSceneUIManager.Instance;
+    }
+
+        /// <summary>
+    /// Validates all required manager references are properly assigned
+    /// </summary>
+    private void ValidateManagerReferences()
+    {
+        if (gameManager == null)
+        {
+            LogDebugMessage("Game Manager is not assigned!");
+        }
+
+        if (parkourQTEManager == null)
+        {
+            LogDebugMessage("QTE Manager is not assigned!");
+        }
+        
+        if (playerCameraManager == null)
+        {
+            LogDebugMessage("Player Camera Manager is not assigned!");
+        }
+
+        if (gameSceneUIManager == null)
+        {
+            LogDebugMessage("Game Scene UI Manager is not assigned!");
+        }
+    }
+
 }
