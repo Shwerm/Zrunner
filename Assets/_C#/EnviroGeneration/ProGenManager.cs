@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+
 
 ///<summary>
 ///Manages procedural generation of the game environment including corridors and obstacles.
@@ -153,16 +155,53 @@ public class ProGenManager : MonoBehaviour
     private GameObject GetNextSection(int randomNum)
     {
         SectionType sectionType = DetermineSectionType(randomNum);
-        return GetObjectFromPool(sectionType);
+        GameObject[] sectionArray = GetSectionArray(sectionType);
+        int randomIndex = UnityEngine.Random.Range(0, sectionArray.Length);
+        
+        if (objectPools[sectionType].Count == 0)
+        {
+            // Replenish pool if empty
+            var newObject = Instantiate(sectionArray[randomIndex]);
+            newObject.SetActive(true);
+            return newObject;
+        }
+        
+        var pooledObject = objectPools[sectionType].Dequeue();
+        pooledObject.SetActive(true);
+        return pooledObject;
+    }
+
+    private GameObject[] GetSectionArray(SectionType sectionType)
+    {
+        switch (sectionType)
+        {
+            case SectionType.Corridor:
+                return corridorSections;
+            case SectionType.Obstacle:
+                return obstacleSections;
+            case SectionType.Enemy:
+                return enemySections;
+            default:
+                return corridorSections;
+        }
     }
 
     private SectionType DetermineSectionType(int randomNum)
     {
-        if (randomNum >= config.EnemySpawnChanceThreshold)
-            return SectionType.Enemy;
-        if (randomNum >= config.ObstacleSpawnChanceThreshold)
+        float randomValue = UnityEngine.Random.Range(0f, 100f);
+        
+        if (randomValue <= config.CorridorSpawnChance)
+        {
             return SectionType.Corridor;
-        return SectionType.Obstacle;
+        }
+        else if (randomValue <= config.CorridorSpawnChance + config.ObstacleSpawnChance)
+        {
+            return SectionType.Obstacle;
+        }
+        else
+        {
+            return SectionType.Enemy;
+        }
     }
 
     private GameObject GetObjectFromPool(SectionType type)
