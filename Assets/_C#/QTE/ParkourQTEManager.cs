@@ -19,6 +19,8 @@ public class ParkourQTEManager : MonoBehaviour
     private PlayerCameraManager playerCameraManager;
     #endregion
 
+    public KeyCode randomKey;
+
 
     /// <summary>
     /// Initializes the QTEManager instance.
@@ -70,8 +72,35 @@ public class ParkourQTEManager : MonoBehaviour
     /// </summary>
     public void parkourQteStart()
     {
+        randomKey = GetRandomKey();
         Time.timeScale = 0.2f;
         gameSceneUIManager.parkourQteVisualTrigger();
+    }
+
+
+    /// <summary>
+    /// Generates a random key for the QTE.
+    /// </summary>
+    KeyCode GetRandomKey()
+    {
+        //Get all the values from the KeyCode enumeration
+        KeyCode[] allKeys = (KeyCode[])System.Enum.GetValues(typeof(KeyCode));
+        
+        //Exclude certain keys if necessary (like Escape, Mouse Buttons, etc.)
+        List<KeyCode> validKeys = new List<KeyCode>();
+
+        foreach (KeyCode key in allKeys)
+        {
+            //Example: Exclude mouse buttons and certain keys
+            if (key >= KeyCode.A && key <= KeyCode.Z)
+            {
+                validKeys.Add(key);
+            }
+        }
+
+        //Pick a random key from the valid keys
+        int randomIndex = Random.Range(0, validKeys.Count);
+        return validKeys[randomIndex];
     }
 
 

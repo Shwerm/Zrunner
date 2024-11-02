@@ -16,6 +16,7 @@ public class GameSceneUIManager : MonoBehaviour
     public static GameSceneUIManager Instance { get; private set; }
     #endregion
 
+
     #region Serialized Fields
     [Header("UI Elements")]
     [SerializeField]private GameObject parkourQTEVisual;
@@ -34,9 +35,11 @@ public class GameSceneUIManager : MonoBehaviour
     [SerializeField]private float combatQteLerpDuration = 0.5f;
     #endregion
 
+
     #region Private Fields
     private PlayerManager playerManager;
     private ParkourQTEManager parkourQTEManager;
+    private CombatQTEManager combatQTEManager;
 
     private Vector3 startScale = new Vector3(3f, 3f, 3f);
     private Vector3 endScale = new Vector3(1f, 1f, 1f);
@@ -68,6 +71,7 @@ public class GameSceneUIManager : MonoBehaviour
         //Assign references to Player Manager and QTE Manager
         playerManager = PlayerManager.Instance;
         parkourQTEManager = ParkourQTEManager.Instance;
+        combatQTEManager = CombatQTEManager.Instance;
 
         //Error Handling
         if (playerManager == null)
@@ -77,9 +81,13 @@ public class GameSceneUIManager : MonoBehaviour
 
         if(parkourQTEManager == null)
         {
-            Debug.LogError("[GameSceneUIManager] Failed to initialize QTE Manager");
+            Debug.LogError("[GameSceneUIManager] Failed to initialize  Parkour QTE Manager");
         }
 
+        if(combatQTEManager == null)
+        {
+            Debug.LogError("[GameSceneUIManager] Failed to initialize Combat QTE Manager");
+        }
         //Initialize UI elements to default values
         parkourQTEVisual.SetActive(false);
         combatQteTimerVisual.SetActive(false);
@@ -88,6 +96,11 @@ public class GameSceneUIManager : MonoBehaviour
     }
 
 
+
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    #region Parkour QTE
     /// <summary>
     /// Handles the QTE visual trigger.
     /// Starts the QTE visual and handles the QTE input.
@@ -95,8 +108,7 @@ public class GameSceneUIManager : MonoBehaviour
     /// </summary>
     public void parkourQteVisualTrigger()
     {
-        KeyCode randomKey = GetRandomKey();
-        parkourQteText.text = randomKey.ToString();
+        parkourQteText.text = parkourQTEManager.randomKey.ToString();
 
         parkourQTEVisual.SetActive(true);
 
@@ -104,25 +116,8 @@ public class GameSceneUIManager : MonoBehaviour
         StartCoroutine(ShrinkRedCircle());
 
         //Handlke QTE Input
-        StartCoroutine(checkPlayerKeyBoardInput(randomKey));
+        StartCoroutine(checkPlayerKeyBoardInput(parkourQTEManager.randomKey));
     }
-
-    public void combatQteVisualTrigger(string activeCombatQTE)
-    {
-        combatQteTimerVisual.SetActive(true);
-        if(activeCombatQTE == "Left")
-        {
-            combatQteLeftGreen.SetActive(true);
-        }
-        else if (activeCombatQTE == "Right")
-        {
-            combatQteRightGreen.SetActive(true);
-        }
-
-        //Start Lerp
-        StartCoroutine(ShrinkRedBar());
-    }
-
 
     /// <summary>
     /// Handles the Parkour QTE input.
@@ -153,24 +148,6 @@ public class GameSceneUIManager : MonoBehaviour
         }
     }
 
-
-    public void LeftSquareClick()
-    {
-        Debug.Log("Lefty Clicked");
-        Time.timeScale = 1f;
-        combatQteTimerVisual.SetActive(false);
-        combatQteLeftGreen.SetActive(false);
-    }
-
-    public void RightSquareClick()
-    {
-        Debug.Log("Righty Clicked");
-        Time.timeScale = 1f;
-        combatQteTimerVisual.SetActive(false);
-        combatQteRightGreen.SetActive(false);
-    }
-
-
     /// <summary>
     /// Shrinks the red circle image over a set duration using lerp.
     /// </summary>
@@ -190,8 +167,33 @@ public class GameSceneUIManager : MonoBehaviour
             yield return null;
         }
     }
+    #endregion
 
 
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    #region Combat QTE
+    public void combatQteVisualTrigger(string activeCombatQTE)
+    {
+        combatQteTimerVisual.SetActive(true);
+        if(activeCombatQTE == "Left")
+        {
+            combatQteLeftGreen.SetActive(true);
+        }
+        else if (activeCombatQTE == "Right")
+        {
+            combatQteRightGreen.SetActive(true);
+        }
+
+        //Start Lerp
+        StartCoroutine(ShrinkRedBar());
+    }
+
+    /// <summary>
+    /// Shrinks the red bar over a set duration using lerp.
+    /// If the QTE was completed successfully, the UI elements are hidden.
+    /// If the QTE was not completed successfully, the UI elements are hidden
+    /// and player death state is triggered.
+    /// </summary>
     private IEnumerator ShrinkRedBar()
     {
         elapsedTime = 0f;
@@ -199,45 +201,45 @@ public class GameSceneUIManager : MonoBehaviour
 
         while (elapsedTime < unscaledLerpDuration)
         {
+            // Check if QTE was completed successfully (UI elements are hidden)
+            if (!combatQteTimerVisual.activeSelf)
+            {
+                yield break;
+            }
+
             elapsedTime += Time.unscaledDeltaTime;
             float progress = Mathf.Clamp01(elapsedTime / unscaledLerpDuration);
             combatQteTimeBar.fillAmount = Mathf.Lerp(1f, 0f, progress);
-            
-            if (progress >= 1f)
+          
+            if (progress >= 1f && combatQteTimerVisual.activeSelf)
             {
                 combatQteTimerVisual.SetActive(false);
                 combatQteLeftGreen.SetActive(false);
                 combatQteRightGreen.SetActive(false);
                 Debug.Log("Combat QTE Failed");
+                combatQTEManager.RushEnemyToPlayer(playerManager.activeCombatQTE);
+                
             }
-            
+          
             yield return null;
         }
     }
 
-    
-    /// <summary>
-    /// Generates a random key for the QTE.
-    /// </summary>
-    KeyCode GetRandomKey()
+    //Button OnClick functions for left and right side squares
+    public void LeftSquareClick()
     {
-        //Get all the values from the KeyCode enumeration
-        KeyCode[] allKeys = (KeyCode[])System.Enum.GetValues(typeof(KeyCode));
-        
-        //Exclude certain keys if necessary (like Escape, Mouse Buttons, etc.)
-        List<KeyCode> validKeys = new List<KeyCode>();
-
-        foreach (KeyCode key in allKeys)
-        {
-            //Example: Exclude mouse buttons and certain keys
-            if (key >= KeyCode.A && key <= KeyCode.Z)
-            {
-                validKeys.Add(key);
-            }
-        }
-
-        //Pick a random key from the valid keys
-        int randomIndex = Random.Range(0, validKeys.Count);
-        return validKeys[randomIndex];
+        Debug.Log("Lefty Clicked");
+        Time.timeScale = 1f;
+        combatQteTimerVisual.SetActive(false);
+        combatQteLeftGreen.SetActive(false);
     }
+
+    public void RightSquareClick()
+    {
+        Debug.Log("Righty Clicked");
+        Time.timeScale = 1f;
+        combatQteTimerVisual.SetActive(false);
+        combatQteRightGreen.SetActive(false);
+    }
+    #endregion
 }

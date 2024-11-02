@@ -13,6 +13,13 @@ public class CombatQTEManager : MonoBehaviour
     public static CombatQTEManager Instance { get; private set; }
     #endregion
 
+    [SerializeField]private GameObject leftEnemy;
+    [SerializeField]private GameObject rightEnemy;
+
+    [SerializeField]private float rushSpeed = 100f;
+
+    private PlayerCameraManager playerCameraManager;
+
     void Awake()
     {
         if (Instance == null)
@@ -25,5 +32,47 @@ public class CombatQTEManager : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        //Disable enemies at start of game
+        leftEnemy.SetActive(false);
+        rightEnemy.SetActive(false);
+
+        playerCameraManager = PlayerCameraManager.Instance;
+        if(playerCameraManager == null)
+        {
+            Debug.LogError("PlayerCameraManager is null");
+        }
+    }
+
+    public void RushEnemyToPlayer(string activeCombatQte)
+    {
+        if(activeCombatQte == "Left")
+        {
+            leftEnemy.SetActive(true);
+
+            playerCameraManager.LookLeft();
+        }
+        else if(activeCombatQte == "Right")
+        {
+            rightEnemy.SetActive(true);
+
+            playerCameraManager.LookRight();
+        }
+    }
+    
+
+    void Update()
+    {
+        if(leftEnemy.activeSelf)
+        {
+            leftEnemy.transform.position = Vector3.MoveTowards(leftEnemy.transform.position, PlayerManager.Instance.transform.position, rushSpeed * Time.deltaTime * 9f);
+        }
+        
+        if(rightEnemy.activeSelf)
+        {
+            rightEnemy.transform.position = Vector3.MoveTowards(rightEnemy.transform.position, PlayerManager.Instance.transform.position, rushSpeed * Time.deltaTime * 9f);
+        }
+    }
     
 }
