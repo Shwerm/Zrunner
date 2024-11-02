@@ -15,7 +15,8 @@ MonoBehaviour:
   InitialCorridorCount: 4
   MaxActiveCorridors: 5
   ChunkUnloadDelay: 4
-  ObstacleSpawnChanceThreshold: 4
-  EnemySpawnChanceThreshold: 11
+  CorridorSpawnChance: 60
+  ObstacleSpawnChance: 20
+  EnemySpawnChance: 20
   SpawnDistance: 25
   PoolSizePerSection: 10
