@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Configuration settings for camera movement and behavior
 /// </summary>
-[CreateAssetMenu(fileName = "CameraConfig", menuName = "Camera/Camera Config")]
+[CreateAssetMenu(fileName = "CameraConfig", menuName = "Camera/Config")]
 public class CameraConfig : ScriptableObject
 {
     [Header("Timing")]
