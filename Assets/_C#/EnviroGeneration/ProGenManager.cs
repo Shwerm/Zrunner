@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 ///<summary>
@@ -37,9 +38,6 @@ public class ProGenManager : MonoBehaviour
     #endregion
 
     #region Initialization
-    ///<summary>
-    ///Initializes the ProGenManager instance and object pools
-    ///</summary>
     private void Awake()
     {
         InitializeSingleton();
@@ -69,23 +67,22 @@ public class ProGenManager : MonoBehaviour
     private void CreatePool(SectionType type, GameObject[] prefabs)
     {
         var pool = new Queue<GameObject>();
-        foreach (var prefab in prefabs)
+        for (int j = 0; j < prefabs.Length; j++)
         {
             for (int i = 0; i < config.PoolSizePerSection; i++)
             {
-                var obj = Instantiate(prefab);
+                var obj = Instantiate(prefabs[j]);
+                obj.name = prefabs[j].name + "_" + i;
                 obj.SetActive(false);
                 pool.Enqueue(obj);
             }
         }
         objectPools[type] = pool;
     }
+
     #endregion
 
     #region Core Generation Logic
-    ///<summary>
-    ///Initializes the corridor generation system and spawns initial sections
-    ///</summary>
     private void Start()
     {
         ValidateConfiguration();
@@ -126,10 +123,6 @@ public class ProGenManager : MonoBehaviour
     #endregion
 
     #region Section Management
-    ///<summary>
-    ///Spawns a new section based on probability configuration
-    ///Uses object pooling for optimal performance
-    ///</summary>
     public void SpawnCorridor()
     {
         try
@@ -153,28 +146,60 @@ public class ProGenManager : MonoBehaviour
     private GameObject GetNextSection(int randomNum)
     {
         SectionType sectionType = DetermineSectionType(randomNum);
-        return GetObjectFromPool(sectionType);
+        GameObject[] sectionArray = GetSectionArray(sectionType);
+        int randomIndex = UnityEngine.Random.Range(0, sectionArray.Length);
+        
+        if (objectPools[sectionType].Count == 0)
+        {
+            var newObject = Instantiate(sectionArray[randomIndex]);
+            newObject.name = sectionArray[randomIndex].name + "_new";
+            newObject.SetActive(true);
+            return newObject;
+        }
+
+        // Convert queue to array for random selection
+        var pooledObjects = objectPools[sectionType].ToArray();
+        var selectedObject = pooledObjects[UnityEngine.Random.Range(0, pooledObjects.Length)];
+        
+        // Remove the selected object from the queue
+        objectPools[sectionType] = new Queue<GameObject>(pooledObjects.Where(x => x != selectedObject));
+        
+        selectedObject.SetActive(true);
+        return selectedObject;
+    }
+
+
+    private GameObject[] GetSectionArray(SectionType sectionType)
+    {
+        switch (sectionType)
+        {
+            case SectionType.Corridor:
+                return corridorSections;
+            case SectionType.Obstacle:
+                return obstacleSections;
+            case SectionType.Enemy:
+                return enemySections;
+            default:
+                return corridorSections;
+        }
     }
 
     private SectionType DetermineSectionType(int randomNum)
     {
-        if (randomNum >= config.EnemySpawnChanceThreshold)
-            return SectionType.Enemy;
-        if (randomNum >= config.ObstacleSpawnChanceThreshold)
-            return SectionType.Corridor;
-        return SectionType.Obstacle;
-    }
-
-    private GameObject GetObjectFromPool(SectionType type)
-    {
-        if (objectPools[type].Count > 0)
+        float randomValue = UnityEngine.Random.Range(0f, 100f);
+        
+        if (randomValue <= config.CorridorSpawnChance)
         {
-            var obj = objectPools[type].Dequeue();
-            obj.SetActive(true);
-            return obj;
+            return SectionType.Corridor;
         }
-        Debug.LogWarning($"[ProGenManager] Pool depleted for {type}");
-        return null;
+        else if (randomValue <= config.CorridorSpawnChance + config.ObstacleSpawnChance)
+        {
+            return SectionType.Obstacle;
+        }
+        else
+        {
+            return SectionType.Enemy;
+        }
     }
 
     private void PositionSection(GameObject section)
@@ -203,9 +228,6 @@ public class ProGenManager : MonoBehaviour
     #endregion
 
     #region Cleanup
-    ///<summary>
-    ///Manages the cleanup of old sections using object pooling
-    ///</summary>
     private IEnumerator StreamChunkUnload()
     {
         yield return new WaitForSeconds(config.ChunkUnloadDelay);
@@ -227,8 +249,7 @@ public class ProGenManager : MonoBehaviour
 
     private SectionType DetermineSectionType(GameObject section)
     {
-        // Determine section type based on tag or component
-        return SectionType.Corridor; // Default fallback
+        return SectionType.Corridor;
     }
     #endregion
 }
