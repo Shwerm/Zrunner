@@ -1966,7 +1966,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1601043787}
-  - component: {fileID: 1601043788}
+  - component: {fileID: 1601043789}
   m_Layer: 0
   m_Name: TimeManager
   m_TagString: Untagged
@@ -1989,7 +1989,7 @@ Transform:
   m_Father: {fileID: 479076643}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1601043788
+--- !u!114 &1601043789
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1998,10 +1998,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1601043786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 328ca5e2f588acc42829275e004c2770, type: 3}
+  m_Script: {fileID: 11500000, guid: 4d8373a4834476747a9774f7da6e978c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSurvivalTime: 0
+  speedMultipliers:
+  - 1
+  - 1.2
+  - 1.4
+  - 1.6
+  - 1.8
+  lerpDurationMultipliers:
+  - 1
+  - 0.9
+  - 0.8
+  - 0.7
+  - 0.6
+  showDebugInfo: 1
 --- !u!1 &1620648131
 GameObject:
   m_ObjectHideFlags: 0

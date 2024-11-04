@@ -16,7 +16,7 @@ public class PlayerManager : MonoBehaviour
 
     #region Serialized Fields
     [Header("Player Settings")]
-    [SerializeField]private float moveSpeed = 8f;
+    [SerializeField]public float moveSpeed = 8f;
 
     [Header("QTE Settings")]
     [SerializeField, Tooltip("Speed at which player dodges left/right")]
@@ -227,5 +227,31 @@ public class PlayerManager : MonoBehaviour
             StopCoroutine(playerCameraManager.cameraTiltCoroutine);
         }
         playerCameraManager.cameraTiltCoroutine = StartCoroutine(playerCameraManager.TiltCameraDown());
+    }
+
+    private void OnEnable()
+    {
+        // Wait for next frame to ensure TimeManager is initialized
+        StartCoroutine(SubscribeToTimeManager());
+    }
+
+    private IEnumerator SubscribeToTimeManager()
+    {
+        yield return new WaitForEndOfFrame();
+        if (TimeManager.Instance != null)
+        {
+            TimeManager.Instance.OnDifficultyChanged += UpdatePlayerSpeed;
+        }
+    }
+    
+    private void OnDisable()
+    {
+        if (TimeManager.Instance != null)
+            TimeManager.Instance.OnDifficultyChanged -= UpdatePlayerSpeed;
+    }
+
+    private void UpdatePlayerSpeed(int difficultyLevel)
+    {
+        moveSpeed *= TimeManager.Instance.CurrentSpeedMultiplier;
     }
 }

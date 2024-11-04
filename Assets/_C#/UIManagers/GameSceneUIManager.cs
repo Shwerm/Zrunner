@@ -29,10 +29,10 @@ public class GameSceneUIManager : MonoBehaviour
     [SerializeField]private GameObject combatQteRightGreen;
 
     [Header("Parkour QTE Timer Settings")]
-    [SerializeField]private float parkourLerpDuration = 2f;
+    [SerializeField]public float parkourLerpDuration = 4f;
 
     [Header("Combat QTE Timer Settings")]
-    [SerializeField]private float combatQteLerpDuration = 0.5f;
+    [SerializeField]public float combatQteLerpDuration = 4f;
     #endregion
 
 
@@ -153,20 +153,26 @@ public class GameSceneUIManager : MonoBehaviour
     /// </summary>
     private IEnumerator ShrinkRedCircle()
     {
-        //Reset elapsed time
         elapsedTime = 0f;
+        float currentDuration = parkourLerpDuration;
 
-        while (elapsedTime < parkourLerpDuration)
+        while (elapsedTime < currentDuration)
         {
-            elapsedTime += Time.deltaTime;
-            float progress = Mathf.Clamp01(elapsedTime / parkourLerpDuration);
-
-            //Lerp between startScale and endScale based on the progress
+            elapsedTime += Time.unscaledDeltaTime;  // Use unscaledDeltaTime to ignore time scale changes
+            float progress = elapsedTime / currentDuration;
+            
             redCircle.transform.localScale = Vector3.Lerp(startScale, endScale, progress);
-
+            
+            if (progress >= 1f)
+            {
+                redCircle.transform.localScale = endScale;
+                break;
+            }
+            
             yield return null;
         }
     }
+
     #endregion
 
 
@@ -197,32 +203,32 @@ public class GameSceneUIManager : MonoBehaviour
     private IEnumerator ShrinkRedBar()
     {
         elapsedTime = 0f;
-        float unscaledLerpDuration = combatQteLerpDuration * 0.5f;
+        float currentDuration = combatQteLerpDuration;
 
-        while (elapsedTime < unscaledLerpDuration)
+        while (elapsedTime < currentDuration)
         {
-            // Check if QTE was completed successfully (UI elements are hidden)
             if (!combatQteTimerVisual.activeSelf)
             {
                 yield break;
             }
 
-            elapsedTime += Time.unscaledDeltaTime;
-            float progress = Mathf.Clamp01(elapsedTime / unscaledLerpDuration);
-            combatQteTimeBar.fillAmount = Mathf.Lerp(1f, 0f, progress);
-          
+            elapsedTime += Time.unscaledDeltaTime;  // Use unscaledDeltaTime to ignore time scale changes
+            float progress = elapsedTime / currentDuration;
+            combatQteTimeBar.fillAmount = 1f - progress;  // Direct calculation instead of Lerp
+            
             if (progress >= 1f && combatQteTimerVisual.activeSelf)
             {
                 combatQteTimerVisual.SetActive(false);
                 combatQteLeftGreen.SetActive(false);
                 combatQteRightGreen.SetActive(false);
-                Debug.Log("Combat QTE Failed");
                 combatQTEManager.RushEnemyToPlayer(playerManager.activeCombatQTE);
+                break;
             }
-          
+            
             yield return null;
         }
     }
+
 
     //Button OnClick functions for left and right side squares
     public void LeftSquareClick()
@@ -242,5 +248,44 @@ public class GameSceneUIManager : MonoBehaviour
         combatQteRightGreen.SetActive(false);
         StartCoroutine(combatQTEManager.ShootEnemy(playerManager.activeCombatQTE));
     }
+    #endregion
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    #region Difficulty Scaling
+    private void OnEnable()
+    {
+        StartCoroutine(SubscribeToTimeManager());
+    }
+
+    private IEnumerator SubscribeToTimeManager()
+    {
+        yield return new WaitForEndOfFrame();
+        if (TimeManager.Instance != null)
+        {
+            TimeManager.Instance.OnDifficultyChanged += UpdateLerpDurations;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (TimeManager.Instance != null)
+            TimeManager.Instance.OnDifficultyChanged -= UpdateLerpDurations;
+    }
+
+    private void UpdateLerpDurations(int difficultyLevel)
+    {
+        float multiplier = TimeManager.Instance.CurrentLerpMultiplier;
+        
+        // Store original base values as constants
+        const float BASE_PARKOUR_DURATION = 4f;
+        const float BASE_COMBAT_DURATION = 4f;
+        
+        // Apply multiplier to fresh base values each time
+        parkourLerpDuration = BASE_PARKOUR_DURATION * multiplier;
+        combatQteLerpDuration = BASE_COMBAT_DURATION * multiplier;
+        
+        Debug.Log($"[GameSceneUIManager] Updated QTE Durations - Parkour: {parkourLerpDuration:F2}s, Combat: {combatQteLerpDuration:F2}s");
+    }
+
     #endregion
 }

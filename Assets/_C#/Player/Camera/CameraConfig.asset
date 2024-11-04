@@ -12,30 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f7e6da87d1f2554ca699336df1608c5, type: 3}
   m_Name: CameraConfig
   m_EditorClassIdentifier: 
-  tiltDuration: 0.2
-  holdDuration: 0.1
+  tiltDuration: 0.5
+  holdDuration: 0.6
   downTiltAngle: 90
   sideTiltAngle: 90
   tiltEasing:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      time: 0.0083351135
+      value: 0.9521179
+      inSlope: 0.08212036
+      outSlope: 0.08212036
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      time: 1.0165405
+      value: 1.0349121
+      inSlope: 0.08212036
+      outSlope: 0.08212036
       tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
