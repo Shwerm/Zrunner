@@ -84,7 +84,7 @@ public class SpawnTrigger : MonoBehaviour, ISpawnTrigger
         if (!enabled) return;
 
         ProGenManager.Instance.SpawnCorridor();
-        PlayerManager.Instance.ReverseDodge();
+        PlayerManager.Instance.Movement.ReverseDodge();
     }
     #endregion
 

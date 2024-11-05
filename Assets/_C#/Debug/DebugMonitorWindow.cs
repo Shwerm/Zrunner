@@ -50,8 +50,12 @@ public class DebugMonitorWindow : EditorWindow
         EditorGUILayout.LabelField("PLAYER INFO", headerStyle);
         if (PlayerManager.Instance != null)
         {
-            EditorGUILayout.LabelField("Speed:", PlayerManager.Instance.moveSpeed.ToString("F2"), valueStyle);
-            EditorGUILayout.LabelField("Dodge Speed Multiplier:", TimeManager.Instance.GetDodgeSpeedMultiplier().ToString("F2"), valueStyle);
+            var playerMovement = PlayerManager.Instance.Movement;
+            if (playerMovement != null)
+            {
+                EditorGUILayout.LabelField("Speed:", playerMovement.moveSpeed.ToString("F2"), valueStyle);
+                EditorGUILayout.LabelField("Dodge Speed Multiplier:", TimeManager.Instance.GetDodgeSpeedMultiplier().ToString("F2"), valueStyle);
+            }
         }
 
         EditorGUILayout.Space(10);

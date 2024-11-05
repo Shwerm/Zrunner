@@ -17,6 +17,7 @@ public class ParkourQTEManager : MonoBehaviour
     private GameSceneUIManager gameSceneUIManager;
     private PlayerManager playerManager;
     private PlayerCameraManager playerCameraManager;
+    private PlayerMovement playerMovement;
     #endregion
 
     public KeyCode randomKey;
@@ -48,6 +49,7 @@ public class ParkourQTEManager : MonoBehaviour
         gameSceneUIManager = GameSceneUIManager.Instance;
         playerManager = PlayerManager.Instance;
         playerCameraManager = PlayerCameraManager.Instance;
+        playerMovement = PlayerMovement.Instance;
 
         //Error Handling
         if(gameSceneUIManager == null)
@@ -111,35 +113,32 @@ public class ParkourQTEManager : MonoBehaviour
     /// <param name="activeQTE"></param> 
     public void parkourQteSuccess(string activeQTE)
     {
+        PlayerMovement playerMovement = PlayerManager.Instance.Movement;
+        
         switch (activeQTE)
         {
             case "Jump":
-            Debug.Log("Jump QTE");
-            playerManager.Jump();
-            break;
-
-            case "Slide":
-            Time.timeScale = 1f;
-            Debug.Log("Slide QTE");
-            break;
+                Debug.Log("Jump QTE");
+                playerMovement.Jump();
+                break;
 
             case "DodgeRight":
-            Time.timeScale = 1f;
-            Debug.Log("DodgeRight QTE");
-            playerManager.Dodge(4);
-            playerCameraManager.LookLeft();
-            break;
+                Time.timeScale = 1f;
+                Debug.Log("DodgeRight QTE");
+                playerMovement.Dodge(4);
+                playerCameraManager.LookLeft();
+                break;
 
             case "DodgeLeft":
-            Time.timeScale = 1f;
-            Debug.Log("DodgeLeft QTE");
-            playerManager.Dodge(-4);
-            playerCameraManager.LookRight();
-            break;
+                Time.timeScale = 1f;
+                Debug.Log("DodgeLeft QTE");
+                playerMovement.Dodge(-4);
+                playerCameraManager.LookRight();
+                break;
 
             default:
-            Debug.Log("Invalid QTE Type");
-            break;
+                Debug.Log("Invalid QTE Type");
+                break;
         }
     }
 }

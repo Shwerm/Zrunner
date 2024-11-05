@@ -1647,11 +1647,42 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3173106381573603983, guid: ca86544090572564da7f727ae2abc496, type: 3}
   m_PrefabInstance: {fileID: 1139723941}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1139723943 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2279120529193664053, guid: ca86544090572564da7f727ae2abc496, type: 3}
+  m_PrefabInstance: {fileID: 1139723941}
+  m_PrefabAsset: {fileID: 0}
 --- !u!20 &1139723944 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 8723242938734213296, guid: ca86544090572564da7f727ae2abc496, type: 3}
   m_PrefabInstance: {fileID: 1139723941}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1139723945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139723943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7801ba3888bf7e4ebae7e96431c1113, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 8
+  dodgeSpeed: 10
+--- !u!114 &1139723946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139723943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb5068e807c68c4fa3868a17a927ec1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1203585631
 GameObject:
   m_ObjectHideFlags: 0
