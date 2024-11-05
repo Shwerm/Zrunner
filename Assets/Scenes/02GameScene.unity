@@ -2006,13 +2006,13 @@ MonoBehaviour:
   - 1.2
   - 1.4
   - 1.6
-  - 1.6
+  - 1
   lerpDurationMultipliers:
   - 1
   - 0.8
   - 0.6
   - 0.4
-  - 0.2
+  - 0.4
   dodgeSpeedMultipliers:
   - 1
   - 1
@@ -2029,8 +2029,8 @@ MonoBehaviour:
   - 1
   - 1
   - 0.7
-  - 0.5
-  - 0.4
+  - 0.6
+  - 1
   showDebugInfo: 1
 --- !u!1 &1620648131
 GameObject:
