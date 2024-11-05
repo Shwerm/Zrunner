@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 /// <summary>
 /// Debug monitoring window for real-time game metrics and performance analysis.
@@ -19,6 +20,14 @@ public class DebugMonitorWindow : EditorWindow
     private float lastUpdateTime;
     private float fps;
     private readonly float sectionSpacing = 10f;
+    private Queue<float> fpsHistory = new Queue<float>();
+    private const int MAX_HISTORY_POINTS = 100;
+    private Rect graphRect;
+    private const float GRAPH_HEIGHT = 150f;
+    private const float GRAPH_WIDTH = 400f;
+    private float minFPS = float.MaxValue;
+    private float maxFPS = float.MinValue;
+    private float averageFPS;
     #endregion
 
     #region Styling
@@ -45,12 +54,14 @@ public class DebugMonitorWindow : EditorWindow
     {
         CleanupReferences();
     }
+
+    private void OnFocus()
+    {
+        CacheReferences();
+    }
     #endregion
 
     #region Initialization
-    /// <summary>
-    /// Initializes GUI styles and colors for the debug window
-    /// </summary>
     private void InitializeStyles()
     {
         headerStyle = new GUIStyle
@@ -65,7 +76,6 @@ public class DebugMonitorWindow : EditorWindow
 
     private void CacheReferences()
     {
-        // Find references even if Singleton instances aren't ready
         if (playerManager == null)
         {
             playerManager = GameObject.FindObjectOfType<PlayerManager>();
@@ -86,12 +96,6 @@ public class DebugMonitorWindow : EditorWindow
         timeManager = null;
         uiManager = null;
     }
-
-    private void OnFocus()
-    {
-        // Refresh references when window regains focus
-        CacheReferences();
-    }
     #endregion
 
     #region GUI Drawing
@@ -107,9 +111,6 @@ public class DebugMonitorWindow : EditorWindow
         }
     }
 
-    /// <summary>
-    /// Main debug information display, organized by system
-    /// </summary>
     private void DrawPlayModeDebugInfo()
     {
         try
@@ -117,6 +118,7 @@ public class DebugMonitorWindow : EditorWindow
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
             DrawPerformanceSection();
+            DrawDebugControls();
             DrawPlayerSection();
             DrawCameraSection();
             DrawTimeSection();
@@ -135,8 +137,79 @@ public class DebugMonitorWindow : EditorWindow
     {
         EditorGUILayout.Space(sectionSpacing);
         EditorGUILayout.LabelField("PERFORMANCE", headerStyle);
-        EditorGUILayout.LabelField("FPS:", CalculateFPS().ToString("F2"), valueStyle);
+
+        float currentFPS = CalculateFPS();
+        UpdateFPSHistory(currentFPS);
+        long memoryUsage = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024 * 1024);
+
+        EditorGUILayout.LabelField("Current FPS:", currentFPS.ToString("F2"), valueStyle);
+        EditorGUILayout.LabelField("Average FPS:", averageFPS.ToString("F2"), valueStyle);
+        EditorGUILayout.LabelField("Memory Usage (MB):", memoryUsage.ToString(), valueStyle);
+
+        DrawPerformanceGraph();
     }
+
+    private void DrawPerformanceGraph()
+    {
+        graphRect = GUILayoutUtility.GetRect(GRAPH_WIDTH, GRAPH_HEIGHT);
+        GUI.Box(graphRect, "");
+
+        if (fpsHistory.Count < 2) return;
+
+        Vector3[] linePoints = new Vector3[fpsHistory.Count];
+        float[] fpsArray = fpsHistory.ToArray();
+        
+        for (int i = 0; i < fpsArray.Length; i++)
+        {
+            float x = graphRect.x + (i * graphRect.width / MAX_HISTORY_POINTS);
+            // Clamp the FPS value between 0 and 60 for visualization
+            float normalizedFPS = Mathf.Clamp(fpsArray[i], 0f, 200f);
+            float y = graphRect.y + (graphRect.height * (1f - normalizedFPS / 200f));
+            linePoints[i] = new Vector3(x, y, 0);
+        }
+
+        Handles.color = Color.green;
+        Handles.DrawAAPolyLine(2f, linePoints);
+    }
+
+    private void DrawDebugControls()
+    {
+        EditorGUILayout.Space(sectionSpacing);
+        EditorGUILayout.LabelField("DEBUG CONTROLS", headerStyle);
+
+        if (GUILayout.Button("Reset Player Position"))
+        {
+            if (playerManager != null)
+            {
+                playerManager.transform.position = Vector3.zero;
+            }
+        }
+
+        if (timeManager != null)
+        {
+            if (GUILayout.Button("Force Next Difficulty Level"))
+            {
+                switch (timeManager.CurrentDifficultyLevel)
+                {
+                    case 1:
+                        timeManager.AddDebugSurvivalTime(30f);
+                        break;
+                    case 2:
+                        timeManager.AddDebugSurvivalTime(60f);
+                        break;
+                    case 3:
+                        timeManager.AddDebugSurvivalTime(90f);
+                        break;
+                    case 4:
+                        timeManager.AddDebugSurvivalTime(120f);
+                        break;
+                }
+            }
+        }
+    }
+
+
+
 
     private void DrawPlayerSection()
     {
@@ -164,6 +237,39 @@ public class DebugMonitorWindow : EditorWindow
             EditorGUILayout.HelpBox("Waiting for player to initialize...", MessageType.Info);
         }
     }
+
+    #region Performance Tracking
+    private void UpdateFPSHistory(float currentFPS)
+    {
+        if (fpsHistory.Count >= MAX_HISTORY_POINTS)
+        {
+            fpsHistory.Dequeue();
+        }
+        
+        fpsHistory.Enqueue(currentFPS);
+        
+        // Update statistics
+        minFPS = Mathf.Min(minFPS, currentFPS);
+        maxFPS = Mathf.Max(maxFPS, currentFPS);
+        
+        float sum = 0;
+        foreach (float fps in fpsHistory)
+        {
+            sum += fps;
+        }
+        averageFPS = sum / fpsHistory.Count;
+    }
+
+    private float CalculateFPS()
+    {
+        if (Time.unscaledTime > lastUpdateTime + updateInterval)
+        {
+            fps = 1.0f / Time.unscaledDeltaTime;
+            lastUpdateTime = Time.unscaledTime;
+        }
+        return fps;
+    }
+    #endregion
 
 
     private void DrawCameraSection()
@@ -208,18 +314,6 @@ public class DebugMonitorWindow : EditorWindow
             EditorGUILayout.LabelField("Parkour QTE Duration:", uiManager.parkourLerpDuration.ToString("F2"), valueStyle);
             EditorGUILayout.LabelField("Combat QTE Duration:", uiManager.combatQteLerpDuration.ToString("F2"), valueStyle);
         }
-    }
-    #endregion
-
-    #region Utility Methods
-    private float CalculateFPS()
-    {
-        if (Time.unscaledTime > lastUpdateTime + updateInterval)
-        {
-            fps = 1.0f / Time.unscaledDeltaTime;
-            lastUpdateTime = Time.unscaledTime;
-        }
-        return fps;
     }
     #endregion
 }

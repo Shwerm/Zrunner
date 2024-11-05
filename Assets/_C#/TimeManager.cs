@@ -143,4 +143,11 @@ public class TimeManager : MonoBehaviour
     {
         return cameraHoldMultipliers[currentDifficultyLevel - 1];
     }
+
+    public void AddDebugSurvivalTime(float timeToAdd)
+    {
+        playerSurvivalTime = timeToAdd;
+        UpdateDifficultyLevel();
+    }
+
 }
