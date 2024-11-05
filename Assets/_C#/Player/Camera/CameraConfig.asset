@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CameraConfig
   m_EditorClassIdentifier: 
   tiltDuration: 0.5
-  holdDuration: 0.6
+  holdDuration: 0.7
   downTiltAngle: 90
   sideTiltAngle: 90
   tiltEasing:

@@ -1187,7 +1187,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 609, y: 258}
+  m_AnchoredPosition: {x: -259, y: -251}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &959626741
@@ -1279,7 +1279,7 @@ MonoBehaviour:
   combatQteTimeBar: {fileID: 1452625941}
   combatQteLeftGreen: {fileID: 1945347913}
   combatQteRightGreen: {fileID: 1906836803}
-  parkourLerpDuration: 2
+  parkourLerpDuration: 4
   combatQteLerpDuration: 4
 --- !u!1 &1054608189
 GameObject:
@@ -1425,8 +1425,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 29.9, y: -32.6}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 24.7, y: 27.6}
+  m_SizeDelta: {x: 202.6376, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1137845706
 MonoBehaviour:
@@ -1511,7 +1511,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -5.093506, y: 0, z: 155.05371, w: -21.715454}
+  m_margin: {x: -0.78796387, y: 58.130066, z: 155.05371, w: -78.43701}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1751,7 +1751,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -960, y: -540}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1452625939
@@ -2013,6 +2013,24 @@ MonoBehaviour:
   - 0.8
   - 0.7
   - 0.6
+  dodgeSpeedMultipliers:
+  - 1
+  - 1
+  - 1.3
+  - 1.6
+  - 2
+  cameraTiltMultipliers:
+  - 1
+  - 1
+  - 0.8
+  - 0.6
+  - 0.4
+  cameraHoldMultipliers:
+  - 1
+  - 1
+  - 0.7
+  - 0.5
+  - 0.3
   showDebugInfo: 1
 --- !u!1 &1620648131
 GameObject:
@@ -2070,7 +2088,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1636888064}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2081,7 +2099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 609, y: 258}
+  m_AnchoredPosition: {x: -260.7, y: -248}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1636888066
@@ -2274,7 +2292,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1906836804
 RectTransform:
   m_ObjectHideFlags: 0

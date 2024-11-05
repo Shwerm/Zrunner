@@ -116,6 +116,16 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
     #endregion
 
     #region Private Methods
+    private float GetAdjustedTiltDuration()
+    {
+        return cameraConfig.tiltDuration * TimeManager.Instance.GetCameraTiltMultiplier();
+    }
+
+    private float GetAdjustedHoldDuration()
+    {
+        return cameraConfig.holdDuration * TimeManager.Instance.GetCameraHoldMultiplier();
+    }
+
     private IEnumerator TiltCamera(Vector3 targetEulerAngles, float holdDuration)
     {
         UpdateCameraState(CameraState.Tilting);
@@ -125,7 +135,7 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
         yield return PerformTilt(originalRotation, targetRotation);
         
         UpdateCameraState(CameraState.Held);
-        yield return new WaitForSeconds(holdDuration);
+        yield return new WaitForSeconds(GetAdjustedHoldDuration());
         
         yield return PerformTilt(targetRotation, originalRotation);
         UpdateCameraState(CameraState.Normal);
@@ -134,10 +144,12 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
     private IEnumerator PerformTilt(Quaternion from, Quaternion to)
     {
         float elapsedTime = 0f;
-        while (elapsedTime < cameraConfig.tiltDuration)
+        float adjustedTiltDuration = GetAdjustedTiltDuration();
+        
+        while (elapsedTime < adjustedTiltDuration)
         {
             elapsedTime += Time.deltaTime;
-            float progress = elapsedTime / cameraConfig.tiltDuration;
+            float progress = elapsedTime / adjustedTiltDuration;
             
             playerCamera.transform.rotation = Quaternion.Slerp(from, to, progress);
             OnTiltProgress?.Invoke(progress);

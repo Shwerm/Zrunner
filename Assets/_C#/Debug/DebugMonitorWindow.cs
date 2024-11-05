@@ -51,7 +51,17 @@ public class DebugMonitorWindow : EditorWindow
         if (PlayerManager.Instance != null)
         {
             EditorGUILayout.LabelField("Speed:", PlayerManager.Instance.moveSpeed.ToString("F2"), valueStyle);
+            EditorGUILayout.LabelField("Dodge Speed Multiplier:", TimeManager.Instance.GetDodgeSpeedMultiplier().ToString("F2"), valueStyle);
         }
+
+        EditorGUILayout.Space(10);
+        EditorGUILayout.LabelField("CAMERA TIMING", headerStyle);
+        if (TimeManager.Instance != null)
+        {
+            EditorGUILayout.LabelField("Camera Tilt Multiplier:", TimeManager.Instance.GetCameraTiltMultiplier().ToString("F2"), valueStyle);
+            EditorGUILayout.LabelField("Camera Hold Multiplier:", TimeManager.Instance.GetCameraHoldMultiplier().ToString("F2"), valueStyle);
+        }
+
 
         EditorGUILayout.Space(10);
         EditorGUILayout.LabelField("TIME & DIFFICULTY", headerStyle);
@@ -64,7 +74,6 @@ public class DebugMonitorWindow : EditorWindow
         {
             EditorGUILayout.LabelField("TimeManager not found in scene", valueStyle);
         }
-
 
         EditorGUILayout.Space(10);
         EditorGUILayout.LabelField("QTE STATUS", headerStyle);

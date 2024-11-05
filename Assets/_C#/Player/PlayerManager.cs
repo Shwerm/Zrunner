@@ -19,7 +19,7 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]public float moveSpeed = 8f;
 
     [Header("QTE Settings")]
-    [SerializeField, Tooltip("Speed at which player dodges left/right")]
+    [SerializeField, Tooltip("Speed at which player dodges left/right")] 
     private float dodgeSpeed = 10f;
     #endregion
 
@@ -207,7 +207,6 @@ public class PlayerManager : MonoBehaviour
                 transform.position.y,
                 transform.position.z
             );
-
             yield return null;
         }
     }
@@ -253,5 +252,8 @@ public class PlayerManager : MonoBehaviour
     private void UpdatePlayerSpeed(int difficultyLevel)
     {
         moveSpeed *= TimeManager.Instance.CurrentSpeedMultiplier;
+        dodgeSpeed = 10f * TimeManager.Instance.GetDodgeSpeedMultiplier(); // Apply multiplier to dodge speed
     }
+
+
 }
