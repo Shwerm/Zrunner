@@ -79,7 +79,6 @@ public class ProGenManager : MonoBehaviour
         }
         objectPools[type] = pool;
     }
-
     #endregion
 
     #region Core Generation Logic
@@ -145,7 +144,22 @@ public class ProGenManager : MonoBehaviour
 
     private GameObject GetNextSection(int randomNum)
     {
-        SectionType sectionType = DetermineSectionType(randomNum);
+        if (activeCorridors.Count > 0)
+        {
+            GameObject lastSection = activeCorridors[activeCorridors.Count - 1];
+            SectionType lastSectionType = DetermineSectionType(lastSection);
+            if (lastSectionType == SectionType.Enemy || lastSectionType == SectionType.Obstacle)
+            {
+                return GetSectionFromPool(SectionType.Corridor);
+            }
+        }
+
+        SectionType sectionType = DetermineSectionTypeFromRandom(randomNum);
+        return GetSectionFromPool(sectionType);
+    }
+
+    private GameObject GetSectionFromPool(SectionType sectionType)
+    {
         GameObject[] sectionArray = GetSectionArray(sectionType);
         int randomIndex = UnityEngine.Random.Range(0, sectionArray.Length);
         
@@ -157,17 +171,13 @@ public class ProGenManager : MonoBehaviour
             return newObject;
         }
 
-        // Convert queue to array for random selection
         var pooledObjects = objectPools[sectionType].ToArray();
         var selectedObject = pooledObjects[UnityEngine.Random.Range(0, pooledObjects.Length)];
-        
-        // Remove the selected object from the queue
         objectPools[sectionType] = new Queue<GameObject>(pooledObjects.Where(x => x != selectedObject));
         
         selectedObject.SetActive(true);
         return selectedObject;
     }
-
 
     private GameObject[] GetSectionArray(SectionType sectionType)
     {
@@ -184,7 +194,7 @@ public class ProGenManager : MonoBehaviour
         }
     }
 
-    private SectionType DetermineSectionType(int randomNum)
+    private SectionType DetermineSectionTypeFromRandom(int randomNum)
     {
         float randomValue = UnityEngine.Random.Range(0f, 100f);
         
@@ -249,6 +259,10 @@ public class ProGenManager : MonoBehaviour
 
     private SectionType DetermineSectionType(GameObject section)
     {
+        if (section.name.Contains("Enemy"))
+            return SectionType.Enemy;
+        if (section.name.Contains("Obstacle"))
+            return SectionType.Obstacle;
         return SectionType.Corridor;
     }
     #endregion

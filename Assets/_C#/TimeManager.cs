@@ -24,14 +24,14 @@ public class TimeManager : MonoBehaviour
     #region Difficulty Multipliers
     [Header("QTE Difficulty Multipliers")]
     [SerializeField] private float[] speedMultipliers = { 1f, 1.2f, 1.4f, 1.6f, 1.6f };
-    [SerializeField] private float[] lerpDurationMultipliers = { 1f, 0.9f, 0.8f, 0.7f, 0.3f };
+    [SerializeField] private float[] lerpDurationMultipliers = { 1f, 0.8f, 0.6f, 0.4f, 0.3f };
 
     [Header("Player Movement Difficulty Multipliers")]
     [SerializeField] private float[] dodgeSpeedMultipliers = { 1f, 1f, 1.3f, 1.6f, 3f }; // Level 1-5
 
     [Header("Camera Multipliers")]
-    [SerializeField] private float[] cameraTiltMultipliers = { 1f, 1f, 0.8f, 0.6f, 0.3f }; // Level 1-5
-    [SerializeField] private float[] cameraHoldMultipliers = { 1f, 1f, 0.7f, 0.5f, 0.2f }; // Level 1-5
+    [SerializeField] private float[] cameraTiltMultipliers = { 1f, 1f, 0.8f, 0.6f, 0.5f }; // Level 1-5
+    [SerializeField] private float[] cameraHoldMultipliers = { 1f, 1f, 0.7f, 0.6f, 0.5f }; // Level 1-5
 
     #endregion
 
