@@ -2,8 +2,14 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// Handles the triggering of new corridor/obstacle section spawns and player position resets
-/// Attached to trigger volumes at the end of each section
+/// Manages procedural level generation triggers and player position resets.
+/// Detects player collisions to spawn new sections and maintain infinite level generation.
+/// 
+/// Key Features:
+/// - Trigger-based section spawning
+/// - Player position management
+/// - Event-driven architecture
+/// - Debug visualization support
 /// Dependencies: PlayerManager.cs, ProGenManager.cs
 /// </summary>
 public interface ISpawnTrigger
@@ -24,6 +30,10 @@ public class SpawnTrigger : MonoBehaviour, ISpawnTrigger
     #endregion
 
     #region Events
+    /// <summary>
+    /// Triggered when a valid collision occurs with the spawn trigger volume.
+    /// Provides the colliding object for validation and processing.
+    /// </summary>
     public event Action<Collider> OnTriggerActivated;
     #endregion
 
@@ -44,7 +54,8 @@ public class SpawnTrigger : MonoBehaviour, ISpawnTrigger
 
     #region Initialization
     /// <summary>
-    /// Locates and validates required game objects and components
+    /// Initializes required components and validates critical references.
+    /// Disables the trigger if dependencies are missing.
     /// </summary>
     private void InitializeComponents()
     {
@@ -71,13 +82,19 @@ public class SpawnTrigger : MonoBehaviour, ISpawnTrigger
         HandleSpawn();
     }
 
+    /// <summary>
+    /// Validates and processes trigger collisions.
+    /// Ensures only player-triggered spawns are processed.
+    /// </summary>
+    /// <param name="other">The collider that entered the trigger volume</param>
     public void HandleTriggerEnter(Collider other)
     {
         OnTriggerEnter(other);
     }
 
     /// <summary>
-    /// Generates next section and resets player position
+    /// Processes spawn events and manages player positioning.
+    /// Triggers new section generation and resets player position.
     /// </summary>
     private void HandleSpawn()
     {
@@ -89,6 +106,10 @@ public class SpawnTrigger : MonoBehaviour, ISpawnTrigger
     #endregion
 
     #region Debug Visualization
+    /// <summary>
+    /// Provides visual debugging in the Unity Editor.
+    /// Draws trigger bounds for easier level design.
+    /// </summary>
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;

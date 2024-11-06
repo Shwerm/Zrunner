@@ -56,6 +56,10 @@ public class ProGenManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initializes object pools for all section types.
+    /// Pre-instantiates objects based on configuration settings.
+    /// </summary>
     private void InitializeObjectPools()
     {
         objectPools = new Dictionary<SectionType, Queue<GameObject>>();
@@ -122,6 +126,10 @@ public class ProGenManager : MonoBehaviour
     #endregion
 
     #region Section Management
+    /// <summary>
+    /// Spawns a new corridor section and handles all related setup.
+    /// Manages section positioning, tracking, and event notification.
+    /// </summary>
     public void SpawnCorridor()
     {
         try
@@ -142,6 +150,12 @@ public class ProGenManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Retrieves the next section to spawn based on game rules and randomization.
+    /// Ensures proper section sequencing and variety in level generation.
+    /// </summary>
+    /// <param name="randomNum">Random value used to determine section type</param>
+    /// <returns>GameObject of the selected section from the pool</returns>
     private GameObject GetNextSection(int randomNum)
     {
         if (activeCorridors.Count > 0)
@@ -158,6 +172,12 @@ public class ProGenManager : MonoBehaviour
         return GetSectionFromPool(sectionType);
     }
 
+    /// <summary>
+    /// Retrieves a section from the object pool based on type.
+    /// Creates new instances if pool is depleted.
+    /// </summary>
+    /// <param name="sectionType">Type of section to retrieve</param>
+    /// <returns>GameObject ready for placement</returns>
     private GameObject GetSectionFromPool(SectionType sectionType)
     {
         GameObject[] sectionArray = GetSectionArray(sectionType);
@@ -194,6 +214,12 @@ public class ProGenManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Determines section type based on spawn probability configuration.
+    /// Uses weighted randomization for variety control.
+    /// </summary>
+    /// <param name="randomNum">Random seed for type determination</param>
+    /// <returns>Selected section type enum</returns>
     private SectionType DetermineSectionTypeFromRandom(int randomNum)
     {
         float randomValue = UnityEngine.Random.Range(0f, 100f);
@@ -238,6 +264,10 @@ public class ProGenManager : MonoBehaviour
     #endregion
 
     #region Cleanup
+    /// <summary>
+    /// Manages the streaming cleanup of old sections.
+    /// Implements delay-based unloading for performance optimization.
+    /// </summary>    
     private IEnumerator StreamChunkUnload()
     {
         yield return new WaitForSeconds(config.ChunkUnloadDelay);
