@@ -2,7 +2,14 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// Core player management system handling initialization and references
+/// Core player management system orchestrating player components and state.
+/// Provides centralized access to player subsystems and handles initialization.
+/// 
+/// Key Features:
+/// - Component management
+/// - Singleton architecture
+/// - QTE state tracking
+/// - Event subscription handling
 /// </summary>
 public class PlayerManager : MonoBehaviour
 {
@@ -34,6 +41,10 @@ public class PlayerManager : MonoBehaviour
         InitializeComponents();
     }
 
+    /// <summary>
+    /// Initializes singleton instance and validates core dependencies.
+    /// Sets up component references and manager connections.
+    /// </summary>
     private void InitializeSingleton()
     {
         if (Instance == null)
@@ -46,6 +57,10 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Caches references to required player components.
+    /// Establishes connections to movement and collision systems.
+    /// </summary>
     private void InitializeComponents()
     {
         Movement = GetComponent<PlayerMovement>();
@@ -58,6 +73,10 @@ public class PlayerManager : MonoBehaviour
         ValidateManagerReferences();
     }
 
+    /// <summary>
+    /// Links manager references for game systems interaction.
+    /// Connects to game, QTE, camera, and UI management systems.
+    /// </summary>
     private void AssignManagerReferences()
     {
         gameManager = GameManager.Instance;
@@ -66,6 +85,10 @@ public class PlayerManager : MonoBehaviour
         gameSceneUIManager = GameSceneUIManager.Instance;
     }
 
+    /// <summary>
+    /// Validates critical manager references.
+    /// Logs errors for missing dependencies to aid debugging.
+    /// </summary>
     private void ValidateManagerReferences()
     {
         if (gameManager == null) Debug.LogError("[PlayerManager] Game Manager is not assigned!");
@@ -81,6 +104,10 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(SubscribeToTimeManager());
     }
 
+    /// <summary>
+    /// Sets up time manager event subscriptions.
+    /// Ensures proper timing for difficulty-based speed updates.
+    /// </summary>
     private IEnumerator SubscribeToTimeManager()
     {
         yield return new WaitForEndOfFrame();

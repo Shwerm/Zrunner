@@ -1,7 +1,14 @@
 using UnityEngine;
 
 /// <summary>
-/// Handles all collision and trigger interactions for the player
+/// Manages player collision detection and response system.
+/// Processes parkour and combat trigger interactions for QTE initiation.
+/// 
+/// Key Features:
+/// - Collision-based death handling
+/// - QTE trigger detection
+/// - Combat encounter initialization
+/// - Time scale manipulation
 /// </summary>
 public class PlayerCollisionHandler : MonoBehaviour
 {
@@ -23,6 +30,11 @@ public class PlayerCollisionHandler : MonoBehaviour
     #endregion
 
     #region Collision Handling
+    /// <summary>
+    /// Processes collision events with obstacles and environmental hazards.
+    /// Triggers player death state on obstacle impacts.
+    /// </summary>
+    /// <param name="collision">Collision data from the physics system</param>
     public void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Obstacle"))
@@ -31,12 +43,22 @@ public class PlayerCollisionHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles trigger volume interactions for both parkour and combat events.
+    /// Routes triggers to appropriate subsystems for processing.
+    /// </summary>
+    /// <param name="other">Trigger collider that initiated the interaction</param>
     public void OnTriggerEnter(Collider other)
     {
         HandleParkourTriggers(other);
         HandleCombatTriggers(other);
     }
 
+    /// <summary>
+    /// Processes parkour-specific trigger interactions.
+    /// Initiates appropriate QTE sequences based on trigger type.
+    /// </summary>
+    /// <param name="other">Trigger collider containing parkour action type</param>
     private void HandleParkourTriggers(Collider other)
     {
         if (other.CompareTag("Jump") || other.CompareTag("Slide") || 
@@ -47,6 +69,11 @@ public class PlayerCollisionHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Manages combat encounter trigger interactions.
+    /// Initiates combat QTEs and adjusts time scale for combat sequences.
+    /// </summary>
+    /// <param name="other">Trigger collider containing combat direction</param>
     private void HandleCombatTriggers(Collider other)
     {
         if (other.CompareTag("Left") || other.CompareTag("Right"))
