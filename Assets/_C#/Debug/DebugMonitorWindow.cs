@@ -5,6 +5,13 @@ using System.Collections.Generic;
 /// <summary>
 /// Debug monitoring window for real-time game metrics and performance analysis.
 /// Provides visualization of critical game systems and performance indicators.
+/// Debug monitoring window for real-time game metrics and performance analysis in the Unity Editor.
+/// Provides visualization and monitoring of:
+/// - Performance metrics (FPS, memory usage)
+/// - Player state and movement
+/// - Camera configuration
+/// - Time and difficulty scaling
+/// - QTE system status
 /// </summary>
 public class DebugMonitorWindow : EditorWindow
 {
@@ -12,22 +19,16 @@ public class DebugMonitorWindow : EditorWindow
     private PlayerManager playerManager;
     private TimeManager timeManager;
     private GameSceneUIManager uiManager;
+    private DebugPerformanceData performanceData;
     #endregion
 
     #region Private Fields
     private Vector2 scrollPosition;
-    [SerializeField] private float updateInterval = 0.5f;
     private float lastUpdateTime;
-    private float fps;
     private readonly float sectionSpacing = 10f;
-    private Queue<float> fpsHistory = new Queue<float>();
-    private const int MAX_HISTORY_POINTS = 100;
     private Rect graphRect;
     private const float GRAPH_HEIGHT = 150f;
-    private const float GRAPH_WIDTH = 400f;
-    private float minFPS = float.MaxValue;
-    private float maxFPS = float.MinValue;
-    private float averageFPS;
+    private const float GRAPH_WIDTH = 200f;
     #endregion
 
     #region Styling
@@ -37,6 +38,11 @@ public class DebugMonitorWindow : EditorWindow
     [SerializeField] private Color valueColor = Color.cyan;
     #endregion
 
+
+    /// <summary>
+    /// Shows the debug monitor window in the Unity Editor.
+    /// Creates a new window instance if one doesn't exist.
+    /// </summary>
     #region Window Management
     [MenuItem("Window/Game Debug Monitor")]
     public static void ShowWindow()
@@ -48,6 +54,7 @@ public class DebugMonitorWindow : EditorWindow
     {
         InitializeStyles();
         CacheReferences();
+        performanceData = new DebugPerformanceData();
     }
 
     private void OnDisable()
@@ -60,6 +67,7 @@ public class DebugMonitorWindow : EditorWindow
         CacheReferences();
     }
     #endregion
+
 
     #region Initialization
     private void InitializeStyles()
@@ -74,6 +82,10 @@ public class DebugMonitorWindow : EditorWindow
         valueStyle.normal.textColor = valueColor;
     }
 
+    /// <summary>
+    /// Initializes and caches references to critical game systems.
+    /// Finds singleton instances of managers needed for debugging.
+    /// </summary>
     private void CacheReferences()
     {
         if (playerManager == null)
@@ -97,6 +109,7 @@ public class DebugMonitorWindow : EditorWindow
         uiManager = null;
     }
     #endregion
+
 
     #region GUI Drawing
     private void OnGUI()
@@ -133,37 +146,43 @@ public class DebugMonitorWindow : EditorWindow
         }
     }
 
+    /// <summary>
+    /// Draws real-time performance metrics including FPS and memory usage.
+    /// Updates and displays current performance snapshot data.
+    /// </summary>
     private void DrawPerformanceSection()
     {
         EditorGUILayout.Space(sectionSpacing);
         EditorGUILayout.LabelField("PERFORMANCE", headerStyle);
 
-        float currentFPS = CalculateFPS();
-        UpdateFPSHistory(currentFPS);
+        performanceData.UpdatePerformanceData();
         long memoryUsage = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024 * 1024);
 
-        EditorGUILayout.LabelField("Current FPS:", currentFPS.ToString("F2"), valueStyle);
-        EditorGUILayout.LabelField("Average FPS:", averageFPS.ToString("F2"), valueStyle);
+        EditorGUILayout.LabelField("Current FPS:", performanceData.CurrentFPS.ToString("F2"), valueStyle);
+        EditorGUILayout.LabelField("Average FPS:", performanceData.AverageFPS.ToString("F2"), valueStyle);
         EditorGUILayout.LabelField("Memory Usage (MB):", memoryUsage.ToString(), valueStyle);
 
         DrawPerformanceGraph();
     }
 
+    /// <summary>
+    /// Draws the performance monitoring graph showing FPS history over time.
+    /// Visualizes data points from the performance history buffer.
+    /// </summary>
     private void DrawPerformanceGraph()
     {
         graphRect = GUILayoutUtility.GetRect(GRAPH_WIDTH, GRAPH_HEIGHT);
         GUI.Box(graphRect, "");
 
-        if (fpsHistory.Count < 2) return;
+        var history = performanceData.History;
+        if (history.Length < 2) return;
 
-        Vector3[] linePoints = new Vector3[fpsHistory.Count];
-        float[] fpsArray = fpsHistory.ToArray();
+        Vector3[] linePoints = new Vector3[history.Length];
         
-        for (int i = 0; i < fpsArray.Length; i++)
+        for (int i = 0; i < history.Length; i++)
         {
-            float x = graphRect.x + (i * graphRect.width / MAX_HISTORY_POINTS);
-            // Clamp the FPS value between 0 and 60 for visualization
-            float normalizedFPS = Mathf.Clamp(fpsArray[i], 0f, 200f);
+            float x = graphRect.x + (i * graphRect.width / DebugConstants.MAX_HISTORY_POINTS);
+            float normalizedFPS = Mathf.Clamp(history[i].fps, 0f, 200f);
             float y = graphRect.y + (graphRect.height * (1f - normalizedFPS / 200f));
             linePoints[i] = new Vector3(x, y, 0);
         }
@@ -172,6 +191,10 @@ public class DebugMonitorWindow : EditorWindow
         Handles.DrawAAPolyLine(2f, linePoints);
     }
 
+    /// <summary>
+    /// Renders debug controls for runtime game manipulation.
+    /// Includes player position reset and difficulty level forcing.
+    /// </summary>
     private void DrawDebugControls()
     {
         EditorGUILayout.Space(sectionSpacing);
@@ -209,8 +232,10 @@ public class DebugMonitorWindow : EditorWindow
     }
 
 
-
-
+    /// <summary>
+    /// Renders player state information when in the game scene.
+    /// Displays movement speeds and active modifiers.
+    /// </summary>
     private void DrawPlayerSection()
     {
         EditorGUILayout.Space(sectionSpacing);
@@ -238,39 +263,6 @@ public class DebugMonitorWindow : EditorWindow
         }
     }
 
-    #region Performance Tracking
-    private void UpdateFPSHistory(float currentFPS)
-    {
-        if (fpsHistory.Count >= MAX_HISTORY_POINTS)
-        {
-            fpsHistory.Dequeue();
-        }
-        
-        fpsHistory.Enqueue(currentFPS);
-        
-        // Update statistics
-        minFPS = Mathf.Min(minFPS, currentFPS);
-        maxFPS = Mathf.Max(maxFPS, currentFPS);
-        
-        float sum = 0;
-        foreach (float fps in fpsHistory)
-        {
-            sum += fps;
-        }
-        averageFPS = sum / fpsHistory.Count;
-    }
-
-    private float CalculateFPS()
-    {
-        if (Time.unscaledTime > lastUpdateTime + updateInterval)
-        {
-            fps = 1.0f / Time.unscaledDeltaTime;
-            lastUpdateTime = Time.unscaledTime;
-        }
-        return fps;
-    }
-    #endregion
-
 
     private void DrawCameraSection()
     {
@@ -284,6 +276,7 @@ public class DebugMonitorWindow : EditorWindow
         }
     }
 
+
     private void DrawTimeSection()
     {
         EditorGUILayout.Space(sectionSpacing);
@@ -295,6 +288,7 @@ public class DebugMonitorWindow : EditorWindow
             EditorGUILayout.LabelField("Difficulty Level:", timeManager.CurrentDifficultyLevel.ToString(), valueStyle);
         }
     }
+
 
     private void DrawQTESection()
     {
