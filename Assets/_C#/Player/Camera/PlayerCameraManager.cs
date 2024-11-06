@@ -3,9 +3,14 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Manages the player camera, including tilt and movement during QTEs.
-/// Implements smooth camera transitions and state management.
-/// Dependencies: CameraConfig
+/// Core camera management system handling player perspective and QTE transitions.
+/// Provides smooth camera movements, state management, and event-driven updates.
+/// 
+/// Key Features:
+/// - Configurable camera transitions
+/// - State-driven behavior system
+/// - Event-based progress tracking
+/// - Singleton architecture for global access
 /// </summary>
 public class PlayerCameraManager : MonoBehaviour, ICameraController
 {
@@ -13,6 +18,10 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
     public static PlayerCameraManager Instance { get; private set; }
     #endregion
 
+    /// <summary>
+    /// Notifies listeners of camera state transitions between Normal, Tilting, and Held states
+    /// Broadcasts tilt animation progress for UI synchronization
+    /// </summary>
     #region Events
     public event Action<CameraState> OnCameraStateChanged;
     public event Action<float> OnTiltProgress;
@@ -76,8 +85,10 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
 
     #region Public Methods
     /// <summary>
-    /// Initiates a downward camera tilt for jump sequences
+    /// Executes a downward camera tilt sequence for jump animations.
+    /// Manages state transitions and timing based on configuration.
     /// </summary>
+    /// <returns>IEnumerator for coroutine execution</returns>
     public IEnumerator TiltCameraDown()
     {
         UpdateCameraState(CameraState.Tilting);
@@ -87,7 +98,8 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
     }
 
     /// <summary>
-    /// Initiates a right-facing camera tilt
+    /// Initiates a right-facing camera transition.
+    /// Handles coroutine management and rotation calculations.
     /// </summary>
     public void LookRight()
     {
@@ -101,7 +113,8 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
     }
 
     /// <summary>
-    /// Initiates a left-facing camera tilt
+    /// Initiates a left-facing camera transition.
+    /// Handles coroutine management and rotation calculations.
     /// </summary>
     public void LookLeft()
     {
@@ -126,6 +139,11 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
         return cameraConfig.holdDuration * TimeManager.Instance.GetCameraHoldMultiplier();
     }
 
+    /// <summary>
+    /// Executes camera tilt animation with timing and state management.
+    /// </summary>
+    /// <param name="targetEulerAngles">Target rotation angles</param>
+    /// <param name="holdDuration">Duration to maintain end position</param>
     private IEnumerator TiltCamera(Vector3 targetEulerAngles, float holdDuration)
     {
         UpdateCameraState(CameraState.Tilting);
@@ -141,6 +159,11 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
         UpdateCameraState(CameraState.Normal);
     }
 
+    /// <summary>
+    /// Performs smooth camera rotation between two orientations.
+    /// </summary>
+    /// <param name="from">Starting rotation</param>
+    /// <param name="to">Target rotation</param>
     private IEnumerator PerformTilt(Quaternion from, Quaternion to)
     {
         float elapsedTime = 0f;
@@ -159,6 +182,10 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
         playerCamera.transform.rotation = to;
     }
 
+    /// <summary>
+    /// Safely terminates active camera transitions.
+    /// Handles edge cases and logs errors for debugging.
+    /// </summary>
     private void SafeStopCoroutine()
     {
         try
@@ -175,6 +202,10 @@ public class PlayerCameraManager : MonoBehaviour, ICameraController
         }
     }
 
+    /// <summary>
+    /// Updates camera state and notifies listeners of state changes.
+    /// </summary>
+    /// <param name="newState">Target camera state</param>
     private void UpdateCameraState(CameraState newState)
     {
         currentState = newState;
