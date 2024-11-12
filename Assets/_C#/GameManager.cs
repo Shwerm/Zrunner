@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     [Header("Player Variables")]
     public float playerScore;
     public float playerHighScore;
+
+    public float musicVol = 5;
+    public float sfxVol = 5;
     #endregion
 
     #region Private Fields

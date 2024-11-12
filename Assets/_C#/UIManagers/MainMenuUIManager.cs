@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 /// <summary>
@@ -20,6 +21,10 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField]private GameObject mainMenuPanel;
     [SerializeField]private GameObject optionsPanel;
     [SerializeField]private GameObject helpPanel;
+
+    [Header("Audio Settings")]
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private Slider sfxSlider;
     #endregion
 
 
@@ -52,6 +57,25 @@ public class MainMenuUIManager : MonoBehaviour
         mainMenuPanel.SetActive(true);
         optionsPanel.SetActive(false);
         helpPanel.SetActive(false);
+
+        //Initialize volume sliders
+        if (musicSlider != null)
+        {
+            musicSlider.value = gameManager.musicVol;
+        }
+        else
+        {
+            Debug.LogError("[MainMenuUIManager] Music slider not assigned!");
+        }
+
+        if (sfxSlider != null)
+        {
+            sfxSlider.value = gameManager.sfxVol;
+        }
+        else
+        {
+            Debug.LogError("[MainMenuUIManager] SFX slider not assigned!");
+        }
     }
 
 
@@ -90,6 +114,26 @@ public class MainMenuUIManager : MonoBehaviour
             mainMenuPanel.SetActive(true);
             optionsPanel.SetActive(false);
             helpPanel.SetActive(false);
+            break;
+        }
+    }
+
+    public void OnSliderValueChanged(string sliderName)
+    {
+        switch (sliderName)
+        {
+            case "MusicSlider":
+            gameManager.musicVol = musicSlider.value;
+            Debug.Log(gameManager.musicVol);
+            break;
+
+            case "SfxSlider":
+            gameManager.sfxVol = sfxSlider.value;
+            Debug.Log(gameManager.sfxVol);
+            break;
+
+            default:
+            Debug.Log("Slider value not recognized.");
             break;
         }
     }
