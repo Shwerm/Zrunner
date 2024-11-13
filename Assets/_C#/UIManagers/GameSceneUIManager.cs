@@ -129,14 +129,18 @@ public class GameSceneUIManager : MonoBehaviour
     {
         while (elapsedTime < parkourLerpDuration)
         {
-          if (Input.GetKeyDown(randomKey))
-             {
-                Time.timeScale = 1f;
-                parkourQTEVisual.SetActive(false);
-                parkourQTEManager.parkourQteSuccess(playerManager.activeParkourQTE);
-                yield break; 
-             }
-          yield return null;
+            // Only check for input if game is not paused
+            if (Time.timeScale != 0)
+            {
+                if (Input.GetKeyDown(randomKey))
+                {
+                    Time.timeScale = 1f;
+                    parkourQTEVisual.SetActive(false);
+                    parkourQTEManager.parkourQteSuccess(playerManager.activeParkourQTE);
+                    yield break; 
+                }
+            }
+            yield return null;
         }
 
         //If the player doesn't press the key within the time limit, handle the failure
@@ -148,6 +152,7 @@ public class GameSceneUIManager : MonoBehaviour
         }
     }
 
+
     /// <summary>
     /// Shrinks the red circle image over a set duration using lerp.
     /// </summary>
@@ -158,9 +163,13 @@ public class GameSceneUIManager : MonoBehaviour
 
         while (elapsedTime < currentDuration)
         {
-            elapsedTime += Time.unscaledDeltaTime;  // Use unscaledDeltaTime to ignore time scale changes
-            float progress = elapsedTime / currentDuration;
+            // Only increment time if game is not paused
+            if (Time.timeScale != 0)
+            {
+                elapsedTime += Time.unscaledDeltaTime;
+            }
             
+            float progress = elapsedTime / currentDuration;
             redCircle.transform.localScale = Vector3.Lerp(startScale, endScale, progress);
             
             if (progress >= 1f)
@@ -172,6 +181,7 @@ public class GameSceneUIManager : MonoBehaviour
             yield return null;
         }
     }
+
 
     #endregion
 
@@ -212,10 +222,15 @@ public class GameSceneUIManager : MonoBehaviour
                 yield break;
             }
 
-            elapsedTime += Time.unscaledDeltaTime;  // Use unscaledDeltaTime to ignore time scale changes
+            // Only increment time if game is not paused
+            if (Time.timeScale != 0)
+            {
+                elapsedTime += Time.unscaledDeltaTime;
+            }
+                
             float progress = elapsedTime / currentDuration;
-            combatQteTimeBar.fillAmount = 1f - progress;  // Direct calculation instead of Lerp
-            
+            combatQteTimeBar.fillAmount = 1f - progress;
+                
             if (progress >= 1f && combatQteTimerVisual.activeSelf)
             {
                 combatQteTimerVisual.SetActive(false);
@@ -224,15 +239,18 @@ public class GameSceneUIManager : MonoBehaviour
                 combatQTEManager.RushEnemyToPlayer(playerManager.activeCombatQTE);
                 break;
             }
-            
+                
             yield return null;
         }
     }
 
 
+
     //Button OnClick functions for left and right side squares
     public void LeftSquareClick()
     {
+        if (Time.timeScale == 0) return;
+        
         Debug.Log("Lefty Clicked");
         Time.timeScale = 1f;
         combatQteTimerVisual.SetActive(false);
@@ -240,8 +258,11 @@ public class GameSceneUIManager : MonoBehaviour
         StartCoroutine(combatQTEManager.ShootEnemy(playerManager.activeCombatQTE));
     }
 
+
     public void RightSquareClick()
     {
+        if (Time.timeScale == 0) return;
+        
         Debug.Log("Righty Clicked");
         Time.timeScale = 1f;
         combatQteTimerVisual.SetActive(false);
