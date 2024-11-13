@@ -20,6 +20,12 @@ public class PauseManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        // Ensure the pause menu is initially hidden
+        pauseMenuUI.SetActive(false);
+    }
+
     private void Update()
     {
         if (SceneManager.GetActiveScene().name != "02GameScene") return;

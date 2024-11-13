@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 
 /// <summary>
@@ -21,6 +22,7 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField]private GameObject mainMenuPanel;
     [SerializeField]private GameObject optionsPanel;
     [SerializeField]private GameObject helpPanel;
+    [SerializeField]private TMP_Text highScoreText;
 
     [Header("Audio Settings")]
     [SerializeField] private Slider musicSlider;
@@ -75,6 +77,12 @@ public class MainMenuUIManager : MonoBehaviour
         else
         {
             Debug.LogError("[MainMenuUIManager] SFX slider not assigned!");
+        }
+
+        //Load High Score into text field
+        if (GameManager.Instance != null)
+        {
+            highScoreText.text = "High Score:" + GameManager.Instance.playerHighScore.ToString();
         }
     }
 
