@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 
 /// <summary>
@@ -15,6 +16,10 @@ public class DeathScreenUIManager : MonoBehaviour
 
     #region Private Fields
     private GameManager gameManager;
+
+    [Header("UI Score Elements")]
+    [SerializeField] private TMP_Text currentScoreText;
+    [SerializeField] private TMP_Text highScoreText;
     #endregion
 
 
@@ -46,6 +51,15 @@ public class DeathScreenUIManager : MonoBehaviour
         {
             Debug.LogError("[DeathScreenUIManager] GameManager instance is not assigned!");
         }
+        else
+        {
+            //Set the current score text
+            currentScoreText.text = " Your Score: " + gameManager.playerScore.ToString();
+            //Set the high score text
+            highScoreText.text = "High Score: " + gameManager.playerHighScore.ToString();
+        }
+
+
     }
 
 
