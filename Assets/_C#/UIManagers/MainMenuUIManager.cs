@@ -23,6 +23,8 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField]private GameObject optionsPanel;
     [SerializeField]private GameObject helpPanel;
     [SerializeField]private TMP_Text highScoreText;
+    [SerializeField]private GameObject helpMenu01;
+    [SerializeField]private GameObject helpMenu02;
 
     [Header("Audio Settings")]
     [SerializeField] private Slider musicSlider;
@@ -122,6 +124,22 @@ public class MainMenuUIManager : MonoBehaviour
             mainMenuPanel.SetActive(true);
             optionsPanel.SetActive(false);
             helpPanel.SetActive(false);
+            break;
+
+            //Next help page
+            case "NextButton":
+            helpMenu01.SetActive(false);
+            helpMenu02.SetActive(true);
+            break;
+
+            //Previous help page
+            case "BackButton":
+            helpMenu01.SetActive(true);
+            helpMenu02.SetActive(false);
+            break;
+
+            default:
+            Debug.Log("Button not recognized.");
             break;
         }
     }
