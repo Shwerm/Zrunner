@@ -41,8 +41,8 @@ public class GameSceneUIManager : MonoBehaviour
     private ParkourQTEManager parkourQTEManager;
     private CombatQTEManager combatQTEManager;
 
-    private Vector3 startScale = new Vector3(3f, 3f, 3f);
-    private Vector3 endScale = new Vector3(1f, 1f, 1f);
+    private Vector3 startScale = new Vector3(4f, 4f, 4f);
+    private Vector3 endScale = new Vector3(1.5f, 1.5f, 1.5f);
     private float elapsedTime = 0f;
     #endregion
 
