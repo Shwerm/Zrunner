@@ -96,7 +96,7 @@ public class TimeManager : MonoBehaviour
     private void Update()
     {
         playerSurvivalTime += Time.deltaTime;
-        gameManager.playerScore = playerSurvivalTime * 10;
+        gameManager.playerScore = playerSurvivalTime;
         UpdateDifficultyLevel();
     }
 
