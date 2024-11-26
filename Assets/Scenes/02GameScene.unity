@@ -2529,8 +2529,8 @@ MonoBehaviour:
   - {fileID: 1729640248562927608, guid: 701a38cca9a1cc74d81829717df7f4a4, type: 3}
   - {fileID: 1551186571851593253, guid: fdacbc695ed5e8e4c834a2bc9b09ef5b, type: 3}
   obstacleSections:
-  - {fileID: 5515667449513037219, guid: be222c4e7e3a5c945999f2627a71360c, type: 3}
-  - {fileID: 8526306688583685847, guid: 1dfa0ecd271bd5f45935c8c3f27a5934, type: 3}
+  - {fileID: 739556257365847866, guid: be222c4e7e3a5c945999f2627a71360c, type: 3}
+  - {fileID: 8160811458339296690, guid: 1dc0d556704a1ca41900436aef77a7c7, type: 3}
   - {fileID: 8526306688583685847, guid: 09b4a11e659a33b409c2dd6056187a71, type: 3}
   enemySections:
   - {fileID: 8358930302007272122, guid: 9a76638ac88e6814eb8a1b41e434bce3, type: 3}
