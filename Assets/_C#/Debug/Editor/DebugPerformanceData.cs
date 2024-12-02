@@ -6,8 +6,6 @@ using UnityEngine;
 /// Real-time performance monitoring system that tracks and analyzes game metrics.
 /// Handles collection and processing of FPS, memory usage, and timing data.
 /// Maintains a historical record of performance snapshots for trend analysis and debugging.
-/// 
-/// Key Features:
 /// - FPS tracking and statistics (min/max/average)
 /// - Memory usage monitoring
 /// - Configurable history buffer

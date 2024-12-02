@@ -4,7 +4,7 @@ using UnityEditor;
 using System.Collections.Generic;
 
 /// <summary>
-/// Debug monitoring window for real-time game metrics and performance analysis.
+/// Debug monitmoring window for real-time game metrics and performance analysis.
 /// Provides visualization of critical game systems and performance indicators.
 /// Debug monitoring window for real-time game metrics and performance analysis in the Unity Editor.
 /// Provides visualization and monitoring of:
