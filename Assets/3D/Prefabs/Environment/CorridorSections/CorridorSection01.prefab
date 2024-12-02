@@ -432,7 +432,7 @@ Transform:
   m_GameObject: {fileID: 4966739250136272433}
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0.019744873, y: -7.2759575e-14, z: 11.977705}
-  m_LocalScale: {x: 1.5, y: 1, z: 2.5}
+  m_LocalScale: {x: 1.5, y: 1, z: 2.6322498}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7249231669110501802}
@@ -466,7 +466,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -1134714066672644336, guid: b110e90e51da9c447a32bab87672ba88, type: 3}
+  - {fileID: 2100000, guid: d64de171f7f61ce4ca6ce21f51a014d3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -704,7 +704,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 0b8b5cc770719d648beca1e96d943d62, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
