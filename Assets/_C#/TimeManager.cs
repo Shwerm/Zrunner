@@ -17,8 +17,8 @@ public class TimeManager : MonoBehaviour
     #region Difficulty Constants
     private const float LEVEL_2_THRESHOLD = 30f;
     private const float LEVEL_3_THRESHOLD = 60f;
-    private const float LEVEL_4_THRESHOLD = 90f;
-    private const float LEVEL_5_THRESHOLD = 120f;
+    private const float LEVEL_4_THRESHOLD = 120f;
+    private const float LEVEL_5_THRESHOLD = 200f;
     #endregion
 
     #region Difficulty Multipliers
