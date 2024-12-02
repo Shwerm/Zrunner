@@ -201,13 +201,6 @@ public class DebugMonitorWindow : EditorWindow
         EditorGUILayout.Space(sectionSpacing);
         EditorGUILayout.LabelField("DEBUG CONTROLS", headerStyle);
 
-        if (GUILayout.Button("Reset Player Position"))
-        {
-            if (playerManager != null)
-            {
-                playerManager.transform.position = Vector3.zero;
-            }
-        }
 
         if (timeManager != null)
         {
@@ -222,10 +215,10 @@ public class DebugMonitorWindow : EditorWindow
                         timeManager.AddDebugSurvivalTime(60f);
                         break;
                     case 3:
-                        timeManager.AddDebugSurvivalTime(90f);
+                        timeManager.AddDebugSurvivalTime(120f);
                         break;
                     case 4:
-                        timeManager.AddDebugSurvivalTime(120f);
+                        timeManager.AddDebugSurvivalTime(200f);
                         break;
                 }
             }
