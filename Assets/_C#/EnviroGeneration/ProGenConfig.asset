@@ -17,6 +17,6 @@ MonoBehaviour:
   ChunkUnloadDelay: 6
   CorridorSpawnChance: 60
   ObstacleSpawnChance: 20
-  EnemySpawnChance: 0
+  EnemySpawnChance: 20
   SpawnDistance: 25
   PoolSizePerSection: 10
