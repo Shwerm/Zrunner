@@ -882,7 +882,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 304949422}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 23.25, y: 1.019865, z: -2.7000008}
+  m_LocalPosition: {x: 5.96, y: 1.019865, z: -1.000001}
   m_LocalScale: {x: 1.5, y: 4.2352724, z: 4.7}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2462,8 +2462,8 @@ MonoBehaviour:
   - {fileID: 8160811458339296690, guid: 1dc0d556704a1ca41900436aef77a7c7, type: 3}
   - {fileID: 1993683533899988251, guid: 47de9d34c7ab02e459f23cd9cfb50191, type: 3}
   enemySections:
-  - {fileID: 8358930302007272122, guid: 9a76638ac88e6814eb8a1b41e434bce3, type: 3}
-  - {fileID: 8358930302007272122, guid: f67ec4724253ca74794cf281ad8cc075, type: 3}
+  - {fileID: 3845314199037236867, guid: 6c69f97561a20c542ac79a645ec1b13b, type: 3}
+  - {fileID: 3845314199037236867, guid: 36bd0f372350e0640b448ea5459b624b, type: 3}
 --- !u!1 &1207235149
 GameObject:
   m_ObjectHideFlags: 0
@@ -2914,7 +2914,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1598833536}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -23.25, y: 1.019865, z: -2.6999998}
+  m_LocalPosition: {x: -5.81, y: 1.019865, z: -1}
   m_LocalScale: {x: 1.5, y: 4.2352724, z: 4.7}
   m_ConstrainProportionsScale: 0
   m_Children: []

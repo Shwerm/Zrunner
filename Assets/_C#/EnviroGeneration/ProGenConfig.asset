@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialCorridorCount: 4
   MaxActiveCorridors: 5
-  ChunkUnloadDelay: 4
+  ChunkUnloadDelay: 6
   CorridorSpawnChance: 60
   ObstacleSpawnChance: 20
   EnemySpawnChance: 0
