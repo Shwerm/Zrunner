@@ -1,18 +1,18 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-
-///<summary>
-///Manages the combat QTE system functionaility
-///Dependencies:
-///</summary>
+/// <summary>
+/// Manages the combat QTE system functionaility.
+/// 
+/// Dependencies: PlayerCameraManager.cs
+/// </summary>
 public class CombatQTEManager : MonoBehaviour
 {
     #region Singleton
     public static CombatQTEManager Instance { get; private set; }
     #endregion
 
+    #region Private Fields
     [SerializeField]private GameObject leftEnemy;
     [SerializeField]private GameObject rightEnemy;
 
@@ -24,6 +24,7 @@ public class CombatQTEManager : MonoBehaviour
     [SerializeField]private float rushSpeed = 100f;
 
     private PlayerCameraManager playerCameraManager;
+    #endregion
 
     void Awake()
     {
@@ -54,6 +55,11 @@ public class CombatQTEManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initiates enemy rush attack sequence based on specified direction.
+    /// Controls enemy visibility and camera orientation.
+    /// </summary>
+    /// <param name="activeCombatQte">Direction of the attack ("Left" or "Right")</param>
     public void RushEnemyToPlayer(string activeCombatQte)
     {
         if(activeCombatQte == "Left")
@@ -68,6 +74,12 @@ public class CombatQTEManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Executes the shooting sequence with timing delays and proper enemy positioning.
+    /// Manages bullet spawning and camera orientation for the attack.
+    /// </summary>
+    /// <param name="activeCombatQte">Direction of the shot ("Left" or "Right")</param>
+    /// <returns>IEnumerator for coroutine execution</returns>
     public IEnumerator ShootEnemy(string activeCombatQte)
     {
         if(activeCombatQte == "Left")
