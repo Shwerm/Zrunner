@@ -2,14 +2,10 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// Core player management system orchestrating player components and state.
-/// Provides centralized access to player subsystems and handles initialization.
+/// Core player management system combining player components and state.
+/// Provides centralised access to player subsystems and handles initialization.
 /// 
-/// Key Features:
-/// - Component management
-/// - Singleton architecture
-/// - QTE state tracking
-/// - Event subscription handling
+/// Dependencies: GameManager.cs, ParkourQTEManager.cs, PlayerCameraManager.cs, GameSceneUIManager.cs
 /// </summary>
 public class PlayerManager : MonoBehaviour
 {
@@ -57,10 +53,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Caches references to required player components.
-    /// Establishes connections to movement and collision systems.
-    /// </summary>
     private void InitializeComponents()
     {
         Movement = GetComponent<PlayerMovement>();
@@ -73,10 +65,6 @@ public class PlayerManager : MonoBehaviour
         ValidateManagerReferences();
     }
 
-    /// <summary>
-    /// Links manager references for game systems interaction.
-    /// Connects to game, QTE, camera, and UI management systems.
-    /// </summary>
     private void AssignManagerReferences()
     {
         gameManager = GameManager.Instance;
