@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
@@ -7,8 +5,7 @@ using System.IO;
 
 
 /// <summary>
-/// Manages the game state and persistent player data.
-/// Dependencies: N/A
+/// Manages the game state and persistent game data.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
