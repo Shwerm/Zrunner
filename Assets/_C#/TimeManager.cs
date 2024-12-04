@@ -1,9 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Handles the game's time management and difficulty level.
+/// Scales difficulty across game depending on player's survival time.
+/// 
+/// Dependencies: GameManager.cs
+/// </summary>
 public class TimeManager : MonoBehaviour
 {
     #region Singleton
@@ -72,6 +76,10 @@ public class TimeManager : MonoBehaviour
     private void Start()
     {
         gameManager = GameManager.Instance;
+        if (gameManager == null)
+        {
+            Debug.LogError("[TimeManager] GameManager is not assigned.");
+        }
         ResetDifficulty();
     }
 
@@ -100,6 +108,10 @@ public class TimeManager : MonoBehaviour
         UpdateDifficultyLevel();
     }
 
+    /// <summary>
+    /// Updates game difficulty based on survival time and triggers related events.
+    /// Manages smooth transitions between difficulty levels.
+    /// </summary>
     private void UpdateDifficultyLevel()
     {
         int newLevel = CalculateDifficultyLevel();
@@ -112,6 +124,11 @@ public class TimeManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Calculates the current difficulty level based on player survival time.
+    /// Maps time thresholds to corresponding difficulty levels (1-5).
+    /// </summary>
+    /// <returns>Integer representing current difficulty level</returns>
     private int CalculateDifficultyLevel()
     {
         if (playerSurvivalTime >= LEVEL_5_THRESHOLD) return 5;
@@ -129,6 +146,12 @@ public class TimeManager : MonoBehaviour
         Debug.Log("[TimeManager] Difficulty reset to Level 1");
     }
 
+
+    /// <summary>
+    /// Retrieves the current speed multiplier for player movement and camera mechanics.
+    /// Scales with difficulty progression.
+    /// </summary>
+    /// <returns>Float multiplier for dodge speed and camera mefchanic calculations</returns>
     public float GetDodgeSpeedMultiplier()
     {
         return dodgeSpeedMultipliers[currentDifficultyLevel - 1];
@@ -149,5 +172,4 @@ public class TimeManager : MonoBehaviour
         playerSurvivalTime = timeToAdd;
         UpdateDifficultyLevel();
     }
-
 }
