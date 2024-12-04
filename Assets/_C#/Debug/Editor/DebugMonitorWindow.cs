@@ -4,7 +4,6 @@
 #if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
 
 /// <summary>
 /// Debug monitoring window for real-time game metrics and performance analysis.
