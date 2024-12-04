@@ -1,7 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles moving the non killable enemy objects towards the player.
+/// </summary>
 public class EnemyRush : MonoBehaviour
 {
     [SerializeField]private float enemySpeed = 10f;
