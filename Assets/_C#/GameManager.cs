@@ -167,7 +167,7 @@ public class GameManager : MonoBehaviour
     {
         if(SceneManager.GetActiveScene().name == "02GameScene")
         {
-            time.timeScale = 1f;
+            Time.timeScale = 1f;
         }
     }
 }
