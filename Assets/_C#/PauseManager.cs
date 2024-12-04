@@ -1,9 +1,16 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Manages the pause menu and pause functionality in the game.
+/// 
+/// Dependencies: GameManager.cs
+/// </summary>
 public class PauseManager : MonoBehaviour
 {
     public static PauseManager Instance { get; private set; }
+
+    private GameManager gameManager;
     
     [SerializeField] private GameObject pauseMenuUI;
     private bool isPaused = false;
@@ -22,6 +29,14 @@ public class PauseManager : MonoBehaviour
 
     private void Start()
     {
+        // Get the GameManager instance
+        gameManager = GameManager.Instance;
+
+        if (gameManager == null)
+        {
+            Debug.LogError("[PauseManager] GameManager not assigned");
+            return;
+        }
         // Ensure the pause menu is initially hidden
         pauseMenuUI.SetActive(false);
     }
@@ -36,6 +51,9 @@ public class PauseManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles the pause state and updates the pause menu UI accordingly.
+    /// </summary>
     public void TogglePause()
     {
         isPaused = !isPaused;
@@ -43,6 +61,9 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = isPaused ? 0f : 1f;
     }
 
+    /// <summary>
+    /// Resumes the game and hides the pause menu.
+    /// </summary>
     public void ResumeGame()
     {
         isPaused = false;
@@ -50,9 +71,12 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    /// <summary>
+    /// Quits the game and returns to the main menu.
+    /// </summary>
     public void QuitToMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("01MainMenu");
+        gameManager.sceneLoader("01MainMenu");
     }
 }
