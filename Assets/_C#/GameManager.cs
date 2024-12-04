@@ -162,14 +162,6 @@ public class GameManager : MonoBehaviour
         sceneLoader("03PlayerDeathScene");
         SaveNewHighScore();
     }
-
-    public void Update()
-    {
-        if(SceneManager.GetActiveScene().name == "02GameScene")
-        {
-            Time.timeScale = 1f;
-        }
-    }
 }
 
 
