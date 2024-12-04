@@ -1,11 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 /// <summary>
-/// Manages the QTE system in the game.
-/// Dependencies: GameSceneUIManager.cs, PlayerManager.cs, PlayerCameraManager.cs
+/// Manages the parkour QTE system.
+/// Handles success and fail states for player.
+/// 
+/// Dependencies: GameSceneUIManager.cs, PlayerManager.cs, PlayerCameraManager.cs, PlayerMovement.cs
 /// </summary>
 public class ParkourQTEManager : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class ParkourQTEManager : MonoBehaviour
 
 
     /// <summary>
-    /// Assigns the instances of the GameSceneUIManager, PlayerManager, and PlayerCameraManager.
+    /// Assigns the instances of the GameSceneUIManager, PlayerManager, PlayerCameraManager and PlayerMovement.
     /// </summary>
     void Start()
     {
@@ -70,7 +71,7 @@ public class ParkourQTEManager : MonoBehaviour
 
 
     /// <summary>
-    /// Starts the QTE process.
+    /// Starts the parkour QTE.
     /// </summary>
     public void parkourQteStart()
     {
