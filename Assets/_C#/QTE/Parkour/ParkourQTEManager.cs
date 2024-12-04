@@ -38,6 +38,8 @@ public class ParkourQTEManager : MonoBehaviour
         {
             Destroy(this);
         }
+
+        Time.timeScale = 1f;
     }
 
 
