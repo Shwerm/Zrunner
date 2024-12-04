@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-///<summary>
-///Manages procedural generation of the game environment including corridors and obstacles.
-///Implements object pooling and event-driven architecture for optimal performance.
-///Dependencies: ProGenConfig.cs
+/// <summary>
+/// Manages procedural generation of the game environment including corridors and obstacles.
+/// Implements object pooling for optimal performance and uses parameters set in the ProGenConfig object.
+/// 
+/// Dependencies: ProGenConfig.cs
 ///</summary>
 public class ProGenManager : MonoBehaviour
 {
@@ -151,7 +152,7 @@ public class ProGenManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Retrieves the next section to spawn based on game rules and randomization.
+    /// Retrieves the next section to spawn based on game rules and randomisation.
     /// Ensures proper section sequencing and variety in level generation.
     /// </summary>
     /// <param name="randomNum">Random value used to determine section type</param>
@@ -266,7 +267,8 @@ public class ProGenManager : MonoBehaviour
     #region Cleanup
     /// <summary>
     /// Manages the streaming cleanup of old sections.
-    /// Implements delay-based unloading for performance optimization.
+    /// Implements delay-based unloading for performance 
+    /// optimisation and smooth player transitions.
     /// </summary>    
     private IEnumerator StreamChunkUnload()
     {
