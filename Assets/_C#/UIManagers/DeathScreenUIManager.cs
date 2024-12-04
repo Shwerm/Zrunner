@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 
 /// <summary>
-/// Manages the UI for the death screen
+/// Manages the UI for the player death screen.
+/// 
 /// Dependencies: GameManager.cs
 /// </summary>
 public class DeathScreenUIManager : MonoBehaviour
@@ -40,7 +39,7 @@ public class DeathScreenUIManager : MonoBehaviour
 
 
     /// <summary>
-    /// Assigns the GameManager instance to the private field
+    /// Assigns the GameManager instance to the private field.
     /// </summary>
     void Start()
     {
@@ -58,13 +57,11 @@ public class DeathScreenUIManager : MonoBehaviour
             //Set the high score text
             highScoreText.text = "High Score: " + gameManager.playerHighScore.ToString();
         }
-
-
     }
 
 
     /// <summary>
-    /// Handles button clicks on the death screen
+    /// Handles button clicks on the death screen.
     /// </summary>
     /// <param name="buttonName"></param>
     public void OnButtonClicked(string buttonName)
