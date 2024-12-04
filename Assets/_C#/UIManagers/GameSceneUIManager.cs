@@ -1,14 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.EventSystems;
-
 
 /// <summary>
 /// Manages the UI for the game scene
-/// Dependencies: PlayerManager.cs, QTEManager.cs
+/// Handles all QTE Indicators and timers through UI elements.
+/// 
+/// Dependencies: PlayerManager.cs, ParkourQTEManager.cs,  CombatQTEManager.cs
 /// </summary>
 public class GameSceneUIManager : MonoBehaviour
 {
@@ -64,11 +63,10 @@ public class GameSceneUIManager : MonoBehaviour
 
 
     /// <summary>
-    /// Initializes the UI elements and references to Player Manager and QTE Manager.
+    /// Initializes the UI elements and references to Player Manager and QTE Managers.
     /// </summary>
     public void Start()
     {
-        //Assign references to Player Manager and QTE Manager
         playerManager = PlayerManager.Instance;
         parkourQTEManager = ParkourQTEManager.Instance;
         combatQTEManager = CombatQTEManager.Instance;
@@ -88,6 +86,7 @@ public class GameSceneUIManager : MonoBehaviour
         {
             Debug.LogError("[GameSceneUIManager] Failed to initialize Combat QTE Manager");
         }
+
         //Initialize UI elements to default values
         parkourQTEVisual.SetActive(false);
         combatQteTimerVisual.SetActive(false);
@@ -96,15 +95,12 @@ public class GameSceneUIManager : MonoBehaviour
     }
 
 
-
-
-
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     #region Parkour QTE
     /// <summary>
-    /// Handles the QTE visual trigger.
-    /// Starts the QTE visual and handles the QTE input.
-    /// Generates a random key for the QTE
+    /// Handles the parkour QTE visual trigger.
+    /// Starts the parkour QTE visual and handles the parkour QTE input.
+    /// Generates a random key for the parkour QTE
     /// </summary>
     public void parkourQteVisualTrigger()
     {
@@ -115,21 +111,21 @@ public class GameSceneUIManager : MonoBehaviour
         //Start Lerp
         StartCoroutine(ShrinkRedCircle());
 
-        //Handlke QTE Input
+        //Handle parkour QTE Input
         StartCoroutine(checkPlayerKeyBoardInput(parkourQTEManager.randomKey));
     }
 
     /// <summary>
-    /// Handles the Parkour QTE input.
+    /// Handles the parkour QTE input.
     /// Checks if the player presses the correct key within the time limit.
-    /// Uses the random key generated in qteVisualTrigger()
+    /// Uses the random key generated in qteVisualTrigger().
     /// </summary>
     /// <param name="randomKey"></param>
     private IEnumerator checkPlayerKeyBoardInput(KeyCode randomKey)
     {
         while (elapsedTime < parkourLerpDuration)
         {
-            // Only check for input if game is not paused
+            //Only check for input if game is not paused
             if (Time.timeScale != 0)
             {
                 if (Input.GetKeyDown(randomKey))
@@ -163,7 +159,7 @@ public class GameSceneUIManager : MonoBehaviour
 
         while (elapsedTime < currentDuration)
         {
-            // Only increment time if game is not paused
+            //Only increment time if game is not paused
             if (Time.timeScale != 0)
             {
                 elapsedTime += Time.unscaledDeltaTime;
@@ -181,8 +177,6 @@ public class GameSceneUIManager : MonoBehaviour
             yield return null;
         }
     }
-
-
     #endregion
 
 
@@ -206,8 +200,8 @@ public class GameSceneUIManager : MonoBehaviour
 
     /// <summary>
     /// Shrinks the red bar over a set duration using lerp.
-    /// If the QTE was completed successfully, the UI elements are hidden.
-    /// If the QTE was not completed successfully, the UI elements are hidden
+    /// If the combat QTE was completed successfully, the UI elements are hidden.
+    /// If the combat QTE was not completed successfully, the UI elements are hidden
     /// and player death state is triggered.
     /// </summary>
     private IEnumerator ShrinkRedBar()
@@ -222,7 +216,7 @@ public class GameSceneUIManager : MonoBehaviour
                 yield break;
             }
 
-            // Only increment time if game is not paused
+            //Only increment time if game is not paused
             if (Time.timeScale != 0)
             {
                 elapsedTime += Time.unscaledDeltaTime;
@@ -297,11 +291,11 @@ public class GameSceneUIManager : MonoBehaviour
     {
         float multiplier = TimeManager.Instance.CurrentLerpMultiplier;
         
-        // Store original base values as constants
+        //Store original base values as constants
         const float BASE_PARKOUR_DURATION = 4f;
         const float BASE_COMBAT_DURATION = 4f;
         
-        // Apply multiplier to fresh base values each time
+        //Apply multiplier to fresh base values each time
         parkourLerpDuration = BASE_PARKOUR_DURATION * multiplier;
         combatQteLerpDuration = BASE_COMBAT_DURATION * multiplier;
         
