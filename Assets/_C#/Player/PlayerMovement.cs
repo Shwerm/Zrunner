@@ -2,14 +2,10 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// Core movement system handling player locomotion and dynamic actions.
+/// Core movement system handling player movement.
 /// Controls forward movement, dodging mechanics, and jump sequences.
 /// 
-/// Key Features:
-/// - Continuous forward movement
-/// - Smooth dodge transitions
-/// - Physics-based jumping
-/// - Difficulty-based speed scaling
+/// Dependencies: PlayerCameraManager.cs
 /// </summary>
 public class PlayerMovement : MonoBehaviour
 {
@@ -58,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     /// Returns player to original lateral position.
-    /// Used after section completion or dodge recovery.
+    /// Used after next section is spawned in 
     /// </summary>
     public void ReverseDodge()
     {
