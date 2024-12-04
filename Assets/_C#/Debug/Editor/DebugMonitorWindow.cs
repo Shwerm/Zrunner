@@ -1,22 +1,24 @@
+/// <summary>
+/// Only for use in editor.
+/// </summary>
 #if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
 /// <summary>
-/// Debug monitmoring window for real-time game metrics and performance analysis.
-/// Provides visualization of critical game systems and performance indicators.
-/// Debug monitoring window for real-time game metrics and performance analysis in the Unity Editor.
+/// Debug monitoring window for real-time game metrics and performance analysis.
 /// Provides visualization and monitoring of:
 /// - Performance metrics (FPS, memory usage)
 /// - Player state and movement
 /// - Camera configuration
 /// - Time and difficulty scaling
 /// - QTE system status
+/// Dependencies: PlayerManager.cs, TimeManager.cs, GameSceneUIManager.cs, DebugPerformanceData.cs
 /// </summary>
 public class DebugMonitorWindow : EditorWindow
 {
-    #region Cached References
+    #region References
     private PlayerManager playerManager;
     private TimeManager timeManager;
     private GameSceneUIManager uiManager;
@@ -84,7 +86,7 @@ public class DebugMonitorWindow : EditorWindow
     }
 
     /// <summary>
-    /// Initializes and caches references to critical game systems.
+    /// Initializes and caches references.
     /// Finds singleton instances of managers needed for debugging.
     /// </summary>
     private void CacheReferences()
@@ -148,8 +150,8 @@ public class DebugMonitorWindow : EditorWindow
     }
 
     /// <summary>
-    /// Draws real-time performance metrics including FPS and memory usage.
-    /// Updates and displays current performance snapshot data.
+    /// Draws real-time performance data including FPS and memory usage.
+    /// Calls the DrawPerformanceGraph function to visualise performance data.
     /// </summary>
     private void DrawPerformanceSection()
     {
@@ -168,7 +170,6 @@ public class DebugMonitorWindow : EditorWindow
 
     /// <summary>
     /// Draws the performance monitoring graph showing FPS history over time.
-    /// Visualizes data points from the performance history buffer.
     /// </summary>
     private void DrawPerformanceGraph()
     {
@@ -193,8 +194,8 @@ public class DebugMonitorWindow : EditorWindow
     }
 
     /// <summary>
-    /// Renders debug controls for runtime game manipulation.
-    /// Includes player position reset and difficulty level forcing.
+    /// Renders debug controls for game manipulation.
+    /// Includes difficulty level forcing for testing.
     /// </summary>
     private void DrawDebugControls()
     {
@@ -228,7 +229,7 @@ public class DebugMonitorWindow : EditorWindow
 
     /// <summary>
     /// Renders player state information when in the game scene.
-    /// Displays movement speeds and active modifiers.
+    /// Displays movement speeds and active camera and qte timer modifiers.
     /// </summary>
     private void DrawPlayerSection()
     {
