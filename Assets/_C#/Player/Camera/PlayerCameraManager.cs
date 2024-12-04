@@ -6,11 +6,7 @@ using UnityEngine;
 /// Core camera management system handling player perspective and QTE transitions.
 /// Provides smooth camera movements, state management, and event-driven updates.
 /// 
-/// Key Features:
-/// - Configurable camera transitions
-/// - State-driven behavior system
-/// - Event-based progress tracking
-/// - Singleton architecture for global access
+/// Dependencies: cameraConfig.cs, playerCamera
 /// </summary>
 public class PlayerCameraManager : MonoBehaviour, ICameraController
 {
