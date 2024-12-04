@@ -7,7 +7,7 @@ using TMPro;
 /// Manages the UI for the game scene
 /// Handles all QTE Indicators and timers through UI elements.
 /// 
-/// Dependencies: PlayerManager.cs, ParkourQTEManager.cs,  CombatQTEManager.cs
+/// Dependencies: PlayerManager.cs, ParkourQTEManager.cs, CombatQTEManager.cs
 /// </summary>
 public class GameSceneUIManager : MonoBehaviour
 {

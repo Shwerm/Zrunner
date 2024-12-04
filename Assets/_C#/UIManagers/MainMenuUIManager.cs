@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -31,7 +29,6 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private Slider sfxSlider;
     #endregion
 
-
     /// <summary>
     /// Initializes the MainMenuUIManager instance.
     /// </summary>
@@ -46,7 +43,6 @@ public class MainMenuUIManager : MonoBehaviour
             Destroy(this);
         }
     }
-
 
     /// <summary>
     /// Assigns the GameManager reference.
@@ -144,6 +140,10 @@ public class MainMenuUIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles slider value changes.
+    /// </summary>
+    /// <param name="sliderName"></param>
     public void OnSliderValueChanged(string sliderName)
     {
         switch (sliderName)
