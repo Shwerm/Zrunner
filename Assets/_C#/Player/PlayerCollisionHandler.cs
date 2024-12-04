@@ -4,11 +4,7 @@ using UnityEngine;
 /// Manages player collision detection and response system.
 /// Processes parkour and combat trigger interactions for QTE initiation.
 /// 
-/// Key Features:
-/// - Collision-based death handling
-/// - QTE trigger detection
-/// - Combat encounter initialization
-/// - Time scale manipulation
+/// Dependencies: PlayerManager.cs, GameManager.cs, ParkourQTEManager.cs, GameSceneUIManager.cs
 /// </summary>
 public class PlayerCollisionHandler : MonoBehaviour
 {
@@ -31,7 +27,7 @@ public class PlayerCollisionHandler : MonoBehaviour
 
     #region Collision Handling
     /// <summary>
-    /// Processes collision events with obstacles and environmental hazards.
+    /// Processes collision events with obstacles.
     /// Triggers player death state on obstacle impacts.
     /// </summary>
     /// <param name="collision">Collision data from the physics system</param>
@@ -44,7 +40,7 @@ public class PlayerCollisionHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles trigger volume interactions for both parkour and combat events.
+    /// Handles trigger hitbox interactions for both parkour and combat events.
     /// Routes triggers to appropriate subsystems for processing.
     /// </summary>
     /// <param name="other">Trigger collider that initiated the interaction</param>
