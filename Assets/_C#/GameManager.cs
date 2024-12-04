@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
     public void LoadHighScore()
     {
         //Set paths for Program Files and subdirectories
-        basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Zrunner");
+        basePath = Path.Combine(Application.persistentDataPath, "Zrunner");
         highScorePath = Path.Combine(basePath, "HighScore");
         jsonFilePath = Path.Combine(highScorePath, "playerHighScore.json");
 
