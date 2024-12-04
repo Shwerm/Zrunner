@@ -1,9 +1,9 @@
 using UnityEngine;
 
 /// <summary>
-/// Procedural generation configuration asset for the runner game environment.
+/// Procedural generation config scriptable object for environment generation.
 /// Controls spawn rates, distances, pooling settings and corridor management.
-/// Used by ProGenManager to determine environment generation behavior.
+/// Used by ProGenManager.cs to determine environment generation behavior.
 /// </summary>
 [CreateAssetMenu(fileName = "ProGenConfig", menuName = "Runner/ProGen Config")]
 public class ProGenConfig : ScriptableObject
@@ -22,8 +22,8 @@ public class ProGenConfig : ScriptableObject
     public float ChunkUnloadDelay = 4f;
     
     /// <summary>
-    /// Percentage chances for different section types to spawn
-    /// Total of all chances should equal 100
+    /// Percentage chances for different section types to spawn.
+    /// Total of all chances must equal 100.
     /// </summary>
     [Header("Spawn Probabilities")]
     [Range(0, 100), Tooltip("Percentage chance of spawning a basic corridor")]
@@ -36,7 +36,7 @@ public class ProGenConfig : ScriptableObject
     public float EnemySpawnChance = 20f;
     
     /// <summary>
-    /// Physical placement and pooling configuration
+    /// Physical placement and pooling configuration.
     /// </summary>
     [Header("Spawn Settings")]
     [Tooltip("Distance between spawned sections in world units")]

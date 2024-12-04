@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Real-time performance monitoring system that tracks and analyzes game metrics.
-/// Handles collection and processing of FPS, memory usage, and timing data.
-/// Maintains a historical record of performance snapshots for trend analysis and debugging.
-/// - FPS tracking and statistics (min/max/average)
-/// - Memory usage monitoring
-/// - Configurable history buffer
-/// - Time-based snapshot system
+/// Core performance monitoring and analysis for tracking real-time debug data.
+/// Provides analysis of:
+/// - FPS tracking with min/max/average calculations
+/// - Memory allocation monitoring
+/// - Historical performance snapshots
+/// - Timestamp-based trend analysis
+/// - Configurable data buffer management
+/// - Interval-based metric updates
 /// </summary>
-
 public static class DebugConstants
 {
     public const int MAX_HISTORY_POINTS = 100;
@@ -21,7 +21,7 @@ public class DebugPerformanceData
 {
     /// <summary>
     /// Stores a single frame's performance metrics including FPS, memory usage and timestamp.
-    /// Used for historical tracking and trend analysis.
+    /// Used for historical tracking and trend analysis for perfromance graph.
     /// </summary>
     #region Data Structures
     public struct PerformanceSnapshot
@@ -59,8 +59,8 @@ public class DebugPerformanceData
 
     #region Public Methods
     /// <summary>
-    /// Updates performance metrics based on the configured interval.
-    /// Captures current FPS and memory usage when interval threshold is met.
+    /// Updates performance data based on the configured interval.
+    /// Captures current FPS and memory usage when interval is met.
     /// </summary>
     public void UpdatePerformanceData()
     {
@@ -79,7 +79,7 @@ public class DebugPerformanceData
     /// Maintains maximum history size by removing oldest entries when full.
     /// </summary>
     /// <param name="fps">Current frames per second</param>
-    /// <param name="memoryUsage">Current memory usage in MB</param>
+    /// <param name="memoryUsage">Current memory usage in Mb</param>
     public void AddSnapshot(float fps, float memoryUsage)
     {
         if (performanceHistory.Count >= MAX_HISTORY_POINTS)
@@ -100,7 +100,7 @@ public class DebugPerformanceData
 
     #region Private Methods
     /// <summary>
-    /// Recalculates performance statistics from the snapshot history.
+    /// Recalculates performance statistic from the snapshot history.
     /// Updates min, max and average FPS values.
     /// </summary>
     private void UpdateStats()
